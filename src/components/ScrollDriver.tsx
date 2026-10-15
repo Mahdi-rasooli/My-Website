@@ -1,29 +1,28 @@
 "use client";
 
 import { useEffect } from "react";
-import Lenis from "lenis";
-import gsap from "gsap";
 import { sceneState } from "@/lib/sceneState";
 import { useStore } from "@/lib/store";
 import { activeStopIndex, trackFromScroll } from "@/lib/track";
 
-/** Smooth-scrolls to the panel for a stop (0 = hero … 6 = contact). */
+/** Scrolls so the panel for a stop (0 = hero … 6 = contact) is centered. */
 export function scrollToStop(stop: number) {
   const el = document.querySelector<HTMLElement>(`[data-stop="${stop}"]`);
   if (!el) return;
-  if (sceneState.lenis) sceneState.lenis.scrollTo(el, { duration: 1.6 });
-  else el.scrollIntoView({ behavior: "auto" });
+  const reduced = useStore.getState().reducedMotion;
+  el.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
 }
 
 /**
- * Turns scroll position into `sceneState.track`, keeps the active stop in the
- * store, and auto-optimizes the knot as soon as the visitor starts scrolling.
+ * Turns native scroll position into `sceneState.track`, keeps the active stop
+ * in the store, and auto-optimizes the knot as soon as the visitor scrolls.
+ * The camera eases toward the track on its own, so native scrolling stays
+ * smooth without hijacking the browser's scroll.
  */
 export default function ScrollDriver() {
   useEffect(() => {
     const store = useStore.getState;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    store().setReducedMotion(reduced);
+    store().setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
     let centers: number[] = [];
     const measure = () => {
@@ -56,28 +55,13 @@ export default function ScrollDriver() {
       update();
     });
     resize.observe(document.body);
+    window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("pointermove", onPointer, { passive: true });
-
-    let lenis: Lenis | null = null;
-    let tick: ((time: number) => void) | null = null;
-    if (reduced) {
-      window.addEventListener("scroll", update, { passive: true });
-    } else {
-      lenis = new Lenis({ lerp: 0.09 });
-      sceneState.lenis = lenis;
-      lenis.on("scroll", update);
-      tick = (time: number) => lenis?.raf(time * 1000);
-      gsap.ticker.add(tick);
-      gsap.ticker.lagSmoothing(0);
-    }
 
     return () => {
       resize.disconnect();
-      window.removeEventListener("pointermove", onPointer);
       window.removeEventListener("scroll", update);
-      if (tick) gsap.ticker.remove(tick);
-      lenis?.destroy();
-      sceneState.lenis = null;
+      window.removeEventListener("pointermove", onPointer);
     };
   }, []);
 

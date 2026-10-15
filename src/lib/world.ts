@@ -76,7 +76,7 @@ export function cameraStops(isMobile: boolean): CameraStop[] {
   const out = NODE_POSITIONS[4];
   const stops: CameraStop[] = [
     isMobile
-      ? { pos: v(0, 0.4, 13), look: v(0, 2.6, 0) }
+      ? { pos: v(0, -1, 17), look: v(0, -3.4, 0) }
       : { pos: v(0, 0.6, 9.5), look: v(-3.4, 0, 0) },
     nodeStop(NODE_POSITIONS[0]),
     nodeStop(NODE_POSITIONS[1]),

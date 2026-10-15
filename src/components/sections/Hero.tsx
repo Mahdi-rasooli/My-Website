@@ -17,7 +17,12 @@ export default function Hero() {
       data-optimized={optimized}
       className="relative flex min-h-svh items-end px-5 pb-14 md:items-center md:px-12 md:pb-0 lg:px-20"
     >
-      <div className="max-w-3xl">
+      {/* On small screens the flow passes behind the copy; a soft scrim keeps it readable. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-linear-to-t from-bg-deep via-bg-deep/75 to-transparent md:hidden"
+      />
+      <div className="relative max-w-3xl">
         <p className="font-mono text-xs text-cyan/80" aria-live="polite">
           process mahdi_rasouli.exe <span className="text-muted">/</span> state:{" "}
           <span className={optimized ? "text-amber" : "text-line"}>{optimized ? "optimized" : "tangled"}</span>
