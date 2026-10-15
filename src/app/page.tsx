@@ -1,4 +1,5 @@
 import ScrollDriver from "@/components/ScrollDriver";
+import SceneLayer from "@/components/scene/SceneLayer";
 import Boot from "@/components/sections/Boot";
 import Hero from "@/components/sections/Hero";
 import Journey from "@/components/sections/Journey";
@@ -9,6 +10,7 @@ export default function Home() {
   return (
     <>
       <ScrollDriver />
+      <SceneLayer />
       <Boot />
       <ProcessRail />
       <main className="relative z-10">

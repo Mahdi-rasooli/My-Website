@@ -15,7 +15,8 @@ export const KNOT_CENTER = new Vector3(0, 0, 0);
 
 /** The clean, optimized flow: enters off-screen, passes every node, exits. */
 export const mainCurve = new CatmullRomCurve3(
-  [new Vector3(-12, -0.6, 6), ...NODE_POSITIONS, new Vector3(46, 0.4, -25)],
+  // Enters from below the hero copy so it never crosses the text.
+  [new Vector3(-3, -7, 3), new Vector3(-1.6, -2.2, 1.2), ...NODE_POSITIONS, new Vector3(46, 0.4, -25)],
   false,
   "centripetal",
 );
