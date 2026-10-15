@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { trackFromScroll, activeStopIndex, segmentOf, LAST_STOP } from "./track";
+import { trackFromScroll, activeStopIndex, segmentOf, framingOf, LAST_STOP } from "./track";
 
 describe("trackFromScroll", () => {
   const centers = [500, 1500, 2500];
@@ -27,4 +27,14 @@ describe("segmentOf", () => {
   it("holds near a stop", () => expect(segmentOf(2.1).t).toBe(0));
   it("clamps at the end", () => expect(segmentOf(10)).toEqual({ from: LAST_STOP, to: LAST_STOP, t: 0 }));
   it("clamps below zero", () => expect(segmentOf(-1)).toEqual({ from: 0, to: 1, t: 0 }));
+});
+
+describe("framingOf", () => {
+  it("glides between stops normally", () => {
+    expect(framingOf(2.5, false)).toEqual(segmentOf(2.5));
+  });
+  it("cuts straight to the nearest stop when motion is reduced", () => {
+    expect(framingOf(2.4, true)).toEqual({ from: 2, to: 2, t: 0 });
+    expect(framingOf(2.6, true)).toEqual({ from: 3, to: 3, t: 0 });
+  });
 });

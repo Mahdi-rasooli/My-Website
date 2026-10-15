@@ -211,10 +211,10 @@ export default function MiniMahdi() {
     if (!g.visible) return;
 
     // Ride the flow.
-    const u = Math.max(0, avatarU(sceneState.track) - U_BEHIND_NODE);
+    const u = Math.max(0, avatarU(sceneState.track, reducedMotion) - U_BEHIND_NODE);
     mainCurve.getPointAt(u, m.target);
     m.target.y += 0.07;
-    if (!m.placed) {
+    if (!m.placed || reducedMotion) {
       g.position.copy(m.target);
       m.placed = true;
     }

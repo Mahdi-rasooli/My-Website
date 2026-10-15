@@ -37,3 +37,10 @@ export function segmentOf(track: number, hold = 0.35): { from: number; to: numbe
   const raw = clamp((c - from - h) / (1 - 2 * h), 0, 1);
   return { from, to, t: raw * raw * (3 - 2 * raw) };
 }
+
+/** Like `segmentOf`, but with reduced motion the view cuts to the nearest stop instead of gliding. */
+export function framingOf(track: number, reducedMotion: boolean): { from: number; to: number; t: number } {
+  if (!reducedMotion) return segmentOf(track);
+  const stop = activeStopIndex(track);
+  return { from: stop, to: stop, t: 0 };
+}

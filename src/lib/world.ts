@@ -1,5 +1,5 @@
 import { CatmullRomCurve3, Vector3 } from "three";
-import { LAST_STOP, segmentOf } from "./track";
+import { LAST_STOP, framingOf } from "./track";
 
 /** Journey nodes 01–04 followed by the OUTPUT node. */
 export const NODE_POSITIONS: readonly Vector3[] = [
@@ -50,8 +50,8 @@ const AVATAR_STOP_US = [
   NODE_US[4],
 ];
 
-export function avatarU(track: number): number {
-  const { from, to, t } = segmentOf(track);
+export function avatarU(track: number, reducedMotion = false): number {
+  const { from, to, t } = framingOf(track, reducedMotion);
   return AVATAR_STOP_US[from] + (AVATAR_STOP_US[to] - AVATAR_STOP_US[from]) * t;
 }
 
