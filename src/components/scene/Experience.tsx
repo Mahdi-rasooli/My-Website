@@ -7,6 +7,7 @@ import CameraRig from "./CameraRig";
 import ProcessPipes from "./ProcessPipes";
 import DataPulses from "./DataPulses";
 import NodeStations from "./NodeStations";
+import MiniMahdi from "./MiniMahdi";
 
 /** The full-screen 3D layer. Decorative only: all content lives in the HTML. */
 export default function Experience({ isMobile }: { isMobile: boolean }) {
@@ -33,6 +34,10 @@ export default function Experience({ isMobile }: { isMobile: boolean }) {
       <ProcessPipes isMobile={isMobile} />
       <DataPulses count={isMobile ? 28 : 56} />
       <NodeStations />
+      <hemisphereLight args={["#cfe8ff", "#0a1628", 1.4]} />
+      <directionalLight position={[4, 6, 8]} intensity={2.2} />
+      <directionalLight position={[-6, 2, -4]} intensity={1.2} color="#5ce1e6" />
+      <MiniMahdi />
     </Canvas>
   );
 }
