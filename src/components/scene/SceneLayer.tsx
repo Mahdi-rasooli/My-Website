@@ -3,16 +3,18 @@
 import dynamic from "next/dynamic";
 import { useStore } from "@/lib/store";
 import { useIsMobile, useWebGLSupport } from "@/lib/useEnvironment";
+import StaticDiagram from "@/components/fallback/StaticDiagram";
 
 const Experience = dynamic(() => import("./Experience"), { ssr: false });
 
-/** Fixed background layer: the 3D scene when WebGL works, nothing otherwise. */
+/** Fixed background layer: the 3D scene when WebGL works, a flat diagram otherwise. */
 export default function SceneLayer() {
   const webgl = useWebGLSupport();
   const isMobile = useIsMobile();
   const dimmed = useStore((s) => s.activeStop === 5);
 
-  if (!webgl) return null;
+  if (webgl === null) return null;
+  if (!webgl) return <StaticDiagram />;
   return (
     <div
       aria-hidden
