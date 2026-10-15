@@ -4,6 +4,7 @@ import Boot from "@/components/sections/Boot";
 import Hero from "@/components/sections/Hero";
 import Journey from "@/components/sections/Journey";
 import Contact from "@/components/sections/Contact";
+import GameSection from "@/components/game/GameSection";
 import ProcessRail from "@/components/sections/ProcessRail";
 
 export default function Home() {
@@ -16,7 +17,7 @@ export default function Home() {
       <main className="relative z-10">
         <Hero />
         <Journey />
-        <section data-stop={5} className="min-h-svh" aria-label="Mini-game" />
+        <GameSection />
         <Contact />
       </main>
     </>
