@@ -1,26 +1,113 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #0a1628;
+  --bg-deep: #060e1a;
+  --grid: rgba(120, 170, 255, 0.08);
+  --line: #e8f1ff;
+  --cyan: #5ce1e6;
+  --amber: #ffb547;
+  --muted: #7f93b2;
+  --ease-flow: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-bg-deep: var(--bg-deep);
+  --color-line: var(--line);
+  --color-cyan: var(--cyan);
+  --color-amber: var(--amber);
+  --color-muted: var(--muted);
+  --font-sans: var(--font-archivo);
+  --font-mono: var(--font-jetbrains);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--bg);
+  color-scheme: dark;
 }
 
+/* Blueprint paper: a fixed drafting grid behind the 3D scene. */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100svh;
+  color: var(--line);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 50% 40%, transparent 30%, var(--bg-deep) 100%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 100% 100%, 48px 48px, 48px 48px;
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--amber);
+  color: var(--bg-deep);
+}
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+/* The wordmark is squeezed while the process is tangled and stretches out once optimized. */
+.wordmark {
+  font-variation-settings: "wdth" 62;
+  transition: font-variation-settings 1.8s var(--ease-flow), letter-spacing 1.8s var(--ease-flow);
+  letter-spacing: -0.02em;
+}
+[data-optimized="true"] .wordmark {
+  font-variation-settings: "wdth" 125;
+  letter-spacing: 0;
+}
+
+/* Drawing-sheet frame: hairline border with registration ticks at the corners. */
+.sheet {
+  position: relative;
+  background: color-mix(in oklab, var(--bg-deep) 82%, transparent);
+  border: 1px solid color-mix(in oklab, var(--cyan) 28%, transparent);
+  backdrop-filter: blur(6px);
+}
+.sheet::before,
+.sheet::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--cyan);
+  border-style: solid;
+  pointer-events: none;
+}
+.sheet::before {
+  top: -5px;
+  left: -5px;
+  border-width: 1px 0 0 1px;
+}
+.sheet::after {
+  bottom: -5px;
+  right: -5px;
+  border-width: 0 1px 1px 0;
+}
+
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

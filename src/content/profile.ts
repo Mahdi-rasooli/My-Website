@@ -48,7 +48,6 @@ export interface Profile {
   nodes: JourneyNode[];
   links: Links;
   game: {
-    eyebrow: string;
     title: string;
     intro: string;
     punchline: string;
@@ -58,7 +57,7 @@ export interface Profile {
 export const profile: Profile = {
   name: "Mahdi Rasouli",
   firstName: "Mahdi",
-  role: "Systems & Methods · AI Process Engineer",
+  role: "AI process engineer at Avitec",
   pitch: "I turn messy processes into elegant systems.",
   birthDate: "2003-09-03",
   location: "TODO(mahdi): City, Country",
@@ -140,7 +139,6 @@ export const profile: Profile = {
     resumeUrl: "/resume.pdf",
   },
   game: {
-    eyebrow: "// interactive · 20 seconds",
     title: "Optimize my morning",
     intro:
       "This is my job, in miniature. Drag the steps into an efficient flow and delete the waste before the clock runs out.",
