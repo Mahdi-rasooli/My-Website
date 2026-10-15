@@ -1,0 +1,56 @@
+"use client";
+
+import { profile } from "@/content/profile";
+import { getAge } from "@/lib/age";
+import { useStore } from "@/lib/store";
+import { scrollToStop } from "@/components/ScrollDriver";
+
+export default function Hero() {
+  const optimized = useStore((s) => s.optimized);
+  const optimize = useStore((s) => s.optimize);
+  // Computed at render so the static HTML never goes stale after a birthday.
+  const age = getAge(profile.birthDate);
+
+  return (
+    <section
+      data-stop={0}
+      data-optimized={optimized}
+      className="relative flex min-h-svh items-end px-5 pb-14 md:items-center md:px-12 md:pb-0 lg:px-20"
+    >
+      <div className="max-w-3xl">
+        <p className="font-mono text-xs text-cyan/80" aria-live="polite">
+          process mahdi_rasouli.exe <span className="text-muted">/</span> state:{" "}
+          <span className={optimized ? "text-amber" : "text-line"}>{optimized ? "optimized" : "tangled"}</span>
+        </p>
+
+        <h1 className="wordmark mt-5 text-[clamp(3.25rem,9vw,8.5rem)] leading-[0.86] font-extrabold uppercase">
+          <span className="block">{profile.firstName}</span>
+          <span className="block">{profile.name.split(" ").slice(1).join(" ")}</span>
+        </h1>
+
+        <p className="mt-8 max-w-[26ch] text-2xl leading-snug md:text-3xl">{profile.pitch}</p>
+        <p className="mt-3 text-muted" suppressHydrationWarning>
+          {profile.role}. {age}, Computer Science graduate, former web developer.
+        </p>
+
+        <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
+          <button
+            type="button"
+            onClick={optimize}
+            disabled={optimized}
+            className="bg-amber px-6 py-3.5 font-semibold text-bg-deep transition-[box-shadow,opacity] hover:shadow-[0_0_32px_-4px_var(--amber)] disabled:cursor-default disabled:opacity-60 disabled:shadow-none"
+          >
+            {optimized ? "Optimized" : "Optimize me"}
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollToStop(1)}
+            className="text-muted underline decoration-cyan/40 underline-offset-[6px] transition-colors hover:text-line"
+          >
+            See how I got here
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}

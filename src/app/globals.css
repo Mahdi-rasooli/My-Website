@@ -91,6 +91,37 @@ body {
   border-width: 0 1px 1px 0;
 }
 
+/* Boot overlay: the command types out while the nodes wire up. */
+.boot-type {
+  width: 0;
+  animation: boot-type 0.7s steps(var(--chars)) forwards;
+}
+.boot-node {
+  opacity: 0.2;
+  animation: boot-on 0.2s ease-out forwards;
+}
+.boot-wire {
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: boot-wire 0.2s ease-out forwards;
+}
+@keyframes boot-type {
+  to {
+    width: calc(var(--chars) * 1ch);
+  }
+}
+@keyframes boot-on {
+  to {
+    opacity: 1;
+    background: var(--cyan);
+  }
+}
+@keyframes boot-wire {
+  to {
+    transform: scaleX(1);
+  }
+}
+
 /* Lenis smooth scroll */
 html.lenis,
 html.lenis body {
