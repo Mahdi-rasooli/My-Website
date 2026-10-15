@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mahdi Rasouli · The Living Process
 
-## Getting Started
+My portfolio and résumé as one interactive page. My career is drawn as a 3D process diagram: it starts as a tangled knot, gets optimized into a clean flow, and a low-poly Mini-Mahdi walks along it from node to node.
 
-First, run the development server:
+Static Next.js site, no backend.
+
+## Edit the content
+
+Everything personal lives in **`src/content/profile.ts`**. Search it for `TODO(mahdi)`: each placeholder shows on the site as a dashed amber slot until you replace it.
+
+Also replace **`public/resume.pdf`** with your real résumé.
+
+Links (email, LinkedIn, GitHub) stay disabled on the page while they are still placeholders.
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm test         # unit tests (game scoring, scroll math, layout)
+npm run lint
+npm run build    # static site in out/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deploy
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`npm run build` writes a fully static site to `out/`. Host it anywhere that serves static files.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Vercel**: import the repo; no settings needed.
+- **Netlify / GitHub Pages / any static host**: publish the `out/` folder.
 
-## Learn More
+Set `NEXT_PUBLIC_SITE_URL` to your final URL (for example `https://mahdirasouli.dev`) before building, so the share image and metadata use absolute links.
 
-To learn more about Next.js, take a look at the following resources:
+The share image is generated at build time as `out/opengraph-image` (a PNG without a file extension). Vercel serves it correctly. If another host serves it with the wrong type, add a rule that sends it as `image/png`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## How it works
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Piece | Where |
+| --- | --- |
+| Scroll position → `track` (0 hero … 6 contact) | `src/lib/track.ts`, `src/components/ScrollDriver.tsx` |
+| 3D layout: nodes, flow curve, camera framings | `src/lib/world.ts` |
+| Knot ↔ clean flow (two tube shapes blended on the GPU) | `src/components/scene/ProcessPipes.tsx`, `pipeMaterial.ts` |
+| Mini-Mahdi | `src/components/scene/MiniMahdi.tsx` |
+| Mini-game and scoring | `src/components/game/` |
+| No-WebGL fallback | `src/components/fallback/StaticDiagram.tsx` |
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The 3D scene loads after the page's text, renders only while the tab is visible, and lowers its resolution if the frame rate drops. With "reduce motion" turned on, nothing animates on its own.
