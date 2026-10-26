@@ -1,47 +1,100 @@
-# Mahdi Rasouli · The Living Process
+<p align="center">
+  <img src="docs/readme/untangle.svg" alt="Mahdi Rasouli: a tangled process untangles into a clean flow" width="100%">
+</p>
 
-My portfolio and résumé as one interactive page. My career is drawn as a 3D process diagram: it starts as a tangled knot, gets optimized into a clean flow, and a low-poly Mini-Mahdi walks along it from node to node.
+<p align="center"><sub>My work is turning tangled processes into clean ones, so this README is written as one too: a process model of me.</sub></p>
 
-Static Next.js site, no backend.
+| | |
+| --- | --- |
+| **Process** | `mahdi_rasouli.exe` |
+| **Owner** | Mahdi Rasouli |
+| **Started** | 3 September 2003 |
+| **Current step** | AI process engineer, Systems & Methods at Avitec |
+| **Input** | a messy process |
+| **Output** | an elegant system |
+| **This repository** | my portfolio and résumé as one interactive 3D page |
 
-## Edit the content
+## ○ Start event
 
-Everything personal lives in **`src/content/profile.ts`**. Search it for `TODO(mahdi)`: each placeholder shows on the site as a dashed amber slot until you replace it.
+On the site, my career starts as a tangled knot of pipes. When you press **Optimize me**, it pulls straight into one clean flow, and a LEGO version of me walks it from node to node. That's what I do for a living, compressed into a single scroll.
 
-Also replace **`public/resume.pdf`** with your real résumé.
+## ▭ Process map
 
-Links (email, LinkedIn, GitHub) stay disabled on the page while they are still placeholders.
+```mermaid
+flowchart LR
+  S(("born<br/>2003-09-03")) --> B["01 · Boot sequence<br/>B.Sc. Computer Science"]
+  B --> W["02 · Web developer<br/>interfaces people use"]
+  W --> M["03 · Machine learning<br/>systems that learn"]
+  M --> A["04 · Avitec<br/>Systems & Methods"]
+  A --> G{"is your process<br/>messy?"}
+  G -- yes --> E((("let's talk")))
+  G -- no --> L(["lucky you"])
 
-## Run it
-
-```bash
-npm install
-npm run dev      # http://localhost:3000
-npm test         # unit tests (game scoring, scroll math, layout)
-npm run lint
-npm run build    # static site in out/
+  classDef step fill:#0a1628,stroke:#5ce1e6,color:#e8f1ff
+  classDef out fill:#ffb547,stroke:#ffb547,color:#0a1628
+  class S,B,W,M,A,G,L step
+  class E out
 ```
 
-## Deploy
+## ▭ Step log
 
-`npm run build` writes a fully static site to `out/`. Host it anywhere that serves static files.
+| Step | Input | Activity | Output |
+| --- | --- | --- | --- |
+| **01 · Boot sequence** | curiosity | B.Sc. in Computer Science: algorithms, data structures, software design | the habit of seeing every problem as inputs, steps and outputs |
+| **02 · Web developer** | a design and a deadline | production websites and web apps with TypeScript, React and Next.js | interfaces people actually use |
+| **03 · Machine learning** | raw data | a machine-learning course and end-to-end models: cleaning, features, training, evaluation | systems that learn from data |
+| **04 · Avitec** | how a company really works | map and model processes, find the bottlenecks, automate steps with AI | processes that are faster, leaner and smarter |
 
-- **Vercel**: import the repo; no settings needed.
-- **Netlify / GitHub Pages / any static host**: publish the `out/` folder.
+## ▭ Bill of materials: the minifigure
 
-Set `NEXT_PUBLIC_SITE_URL` to your final URL (for example `https://mahdirasouli.dev`) before building, so the share image and metadata use absolute links.
+<table>
+  <tr>
+    <td width="42%"><img src="docs/readme/minifig.png" alt="LEGO minifigure of Mahdi holding a clipboard" width="100%"></td>
+    <td>
+      <b>Set 0309 · Mahdi</b><br>
+      <sub>(named after 03/09, my birthday)</sub>
+      <br><br>
+      1 × head, printed: heavy brows, stubble beard, calm half-smile<br>
+      1 × hair piece: dark brown quiff, parted to one side<br>
+      1 × torso: grey crew-neck tee with a process-flow print<br>
+      2 × arms, short sleeves<br>
+      2 × hands, C-clip<br>
+      1 × hips and legs: denim<br>
+      2 × white sneakers
+      <br><br>
+      <b>Swapped in for each chapter</b><br>
+      graduation cap · laptop · glowing brain · clipboard
+      <br><br>
+      <sub>No 3D model file anywhere: every brick, print and prop is generated in code from real minifig proportions, so he costs the page almost nothing to load.</sub>
+    </td>
+  </tr>
+</table>
 
-The share image is generated at build time as `out/opengraph-image` (a PNG without a file extension). Vercel serves it correctly. If another host serves it with the wrong type, add a rule that sends it as `image/png`.
+## ◇ Acceptance tests
 
-## How it works
+Things to try on the site. Tick them off as you go.
 
-| Piece | Where |
+- [ ] Press **Optimize me** and watch the knot untangle (and my name stretch)
+- [ ] Watch LEGO me pop onto the flow and walk to each node
+- [ ] Move your cursor; he turns his head to follow it
+- [ ] Spot the prop he carries in every chapter
+- [ ] Beat **Optimize my morning**: drag the steps into an efficient flow and delete the waste before the clock runs out
+- [ ] Reach the last node and get waved at
+- [ ] Turn on "reduce motion" on your device: everything holds still and you still get the whole story
+- [ ] Open it without WebGL: the same story as a flat diagram
+
+## ▭ Process metrics
+
+| Metric | Value |
 | --- | --- |
-| Scroll position → `track` (0 hero … 6 contact) | `src/lib/track.ts`, `src/components/ScrollDriver.tsx` |
-| 3D layout: nodes, flow curve, camera framings | `src/lib/world.ts` |
-| Knot ↔ clean flow (two tube shapes blended on the GPU) | `src/components/scene/ProcessPipes.tsx`, `pipeMaterial.ts` |
-| Mini-Mahdi | `src/components/scene/MiniMahdi.tsx` |
-| Mini-game and scoring | `src/components/game/` |
-| No-WebGL fallback | `src/components/fallback/StaticDiagram.tsx` |
+| Servers behind the site | 0 |
+| 3D model files downloaded | 0 |
+| Frames rendered while the tab is hidden | 0 |
+| When the frame rate drops | resolution steps down, the animation keeps going |
+| Built with | Next.js · React · TypeScript · three.js / React Three Fiber · GSAP · Motion |
 
-The 3D scene loads after the page's text, renders only while the tab is visible, and lowers its resolution if the frame rate drops. With "reduce motion" turned on, nothing animates on its own.
+## ◉ End event
+
+Every process needs an end event. Mine is a conversation: the last node on the site has my links and my résumé.
+
+<p align="center"><b>Got a messy process? Let's talk.</b></p>

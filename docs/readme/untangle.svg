@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400" role="img" aria-label="Mahdi Rasouli: a tangled process untangles into a clean flow">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#78aaff" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="400" rx="20" fill="#0a1628"/>
+  <rect width="1200" height="400" rx="20" fill="url(#grid)"/>
+
+  <g font-family="Archivo, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <text x="80" y="100" fill="#e8f1ff" font-size="60" font-weight="800" letter-spacing="-1">MAHDI RASOULI</text>
+    <text x="80" y="140" fill="#9fb3cf" font-size="24">I turn messy processes into elegant systems.</text>
+  </g>
+  <g font-family="'JetBrains Mono', Consolas, Menlo, monospace" font-size="17">
+    <text x="80" y="180" fill="#5ce1e6">process mahdi_rasouli.exe /</text>
+    <text x="350" y="180" fill="#ffb547" opacity="0">state: tangled
+      <animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.3;0.34;0.9;1" dur="8s" repeatCount="indefinite"/>
+    </text>
+    <text x="350" y="180" fill="#5ce1e6">state: optimized
+      <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.3;0.34;0.9;1" dur="8s" repeatCount="indefinite"/>
+    </text>
+  </g>
+
+  <!-- The process: a knot that untangles into a straight flow, then tangles again. -->
+  <g fill="none" stroke="#5ce1e6" stroke-linecap="round">
+    <path stroke-width="14" stroke-opacity="0.18" d="M80 300 C150 300 200 300 260 300 C330 300 410 300 480 300 C550 300 630 300 700 300 C770 300 850 300 920 300 C980 300 1010 300 1040 300 C1070 300 1090 300 1120 300">
+      <animate attributeName="d" dur="8s" repeatCount="indefinite" calcMode="spline"
+        keyTimes="0;0.19;0.44;0.88;1" keySplines="0 0 1 1;0.6 0 0.2 1;0 0 1 1;0.6 0 0.2 1"
+        values="M80 300 C300 300 420 170 560 220 C700 270 520 380 430 310 C340 240 700 170 760 280 C820 390 480 380 520 270 C560 160 860 210 800 320 C760 390 1000 300 1120 300;M80 300 C300 300 420 170 560 220 C700 270 520 380 430 310 C340 240 700 170 760 280 C820 390 480 380 520 270 C560 160 860 210 800 320 C760 390 1000 300 1120 300;M80 300 C150 300 200 300 260 300 C330 300 410 300 480 300 C550 300 630 300 700 300 C770 300 850 300 920 300 C980 300 1010 300 1040 300 C1070 300 1090 300 1120 300;M80 300 C150 300 200 300 260 300 C330 300 410 300 480 300 C550 300 630 300 700 300 C770 300 850 300 920 300 C980 300 1010 300 1040 300 C1070 300 1090 300 1120 300;M80 300 C300 300 420 170 560 220 C700 270 520 380 430 310 C340 240 700 170 760 280 C820 390 480 380 520 270 C560 160 860 210 800 320 C760 390 1000 300 1120 300"/>
+    </path>
+    <path stroke-width="4" d="M80 300 C150 300 200 300 260 300 C330 300 410 300 480 300 C550 300 630 300 700 300 C770 300 850 300 920 300 C980 300 1010 300 1040 300 C1070 300 1090 300 1120 300">
+      <animate attributeName="d" dur="8s" repeatCount="indefinite" calcMode="spline"
+        keyTimes="0;0.19;0.44;0.88;1" keySplines="0 0 1 1;0.6 0 0.2 1;0 0 1 1;0.6 0 0.2 1"
+        values="M80 300 C300 300 420 170 560 220 C700 270 520 380 430 310 C340 240 700 170 760 280 C820 390 480 380 520 270 C560 160 860 210 800 320 C760 390 1000 300 1120 300;M80 300 C300 300 420 170 560 220 C700 270 520 380 430 310 C340 240 700 170 760 280 C820 390 480 380 520 270 C560 160 860 210 800 320 C760 390 1000 300 1120 300;M80 300 C150 300 200 300 260 300 C330 300 410 300 480 300 C550 300 630 300 700 300 C770 300 850 300 920 300 C980 300 1010 300 1040 300 C1070 300 1090 300 1120 300;M80 300 C150 300 200 300 260 300 C330 300 410 300 480 300 C550 300 630 300 700 300 C770 300 850 300 920 300 C980 300 1010 300 1040 300 C1070 300 1090 300 1120 300;M80 300 C300 300 420 170 560 220 C700 270 520 380 430 310 C340 240 700 170 760 280 C820 390 480 380 520 270 C560 160 860 210 800 320 C760 390 1000 300 1120 300"/>
+    </path>
+  </g>
+
+  <!-- Career nodes appear once the flow is clean. -->
+  <g>
+    <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.4;0.48;0.84;0.88;1" dur="8s" repeatCount="indefinite"/>
+    <g fill="#0a1628" stroke="#5ce1e6" stroke-width="3">
+      <rect x="249" y="289" width="22" height="22" transform="rotate(45 260 300)"/>
+      <rect x="469" y="289" width="22" height="22" transform="rotate(45 480 300)"/>
+      <rect x="689" y="289" width="22" height="22" transform="rotate(45 700 300)"/>
+      <rect x="909" y="289" width="22" height="22" transform="rotate(45 920 300)"/>
+    </g>
+    <g font-family="'JetBrains Mono', Consolas, Menlo, monospace" font-size="14" fill="#7f93b2" text-anchor="middle">
+      <text x="260" y="345">01 boot</text>
+      <text x="480" y="345">02 web</text>
+      <text x="700" y="345">03 ml</text>
+      <text x="920" y="345">04 avitec</text>
+    </g>
+  </g>
+
+  <!-- Data pulses travel the optimized flow. -->
+  <g fill="#ffb547">
+    <circle cy="300" r="5" opacity="0">
+      <animate attributeName="cx" values="80;80;1120;1120" keyTimes="0;0.46;0.7;1" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.46;0.47;0.69;0.7;1" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cy="300" r="5" opacity="0">
+      <animate attributeName="cx" values="80;80;1120;1120" keyTimes="0;0.6;0.84;1" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.6;0.61;0.83;0.84;1" dur="8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Input and output exist from the start; only the middle is messy. -->
+  <circle cx="80" cy="300" r="9" fill="#0a1628" stroke="#5ce1e6" stroke-width="3"/>
+  <circle cx="1120" cy="300" r="12" fill="#ffb547"/>
+  <g font-family="'JetBrains Mono', Consolas, Menlo, monospace" font-size="14" fill="#7f93b2">
+    <text x="80" y="345" text-anchor="middle">input</text>
+    <text x="1120" y="345" text-anchor="middle">output</text>
+  </g>
+</svg>
