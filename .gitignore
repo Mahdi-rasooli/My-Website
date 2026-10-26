@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Git Bash crash dumps
 *.stackdump
+
+# Raw character exports and source photo (never commit)
+/assets/
