@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { BoxGeometry, LatheGeometry } from "three";
-import { headProfile, taperTop, uvByHeight } from "./shapes";
+import { clipShape, headProfile, taperTop, uvByHeight } from "./shapes";
 
 const column = (g: BoxGeometry | LatheGeometry, attr: "position" | "uv", i: number) => {
   const a = g.getAttribute(attr);
@@ -32,6 +32,24 @@ describe("headProfile", () => {
     expect(pts.at(-1)!.x).toBe(0);
     expect(pts.at(-1)!.y).toBeCloseTo(4);
     expect(Math.max(...pts.map((p) => p.x))).toBeCloseTo(5);
+  });
+});
+
+describe("clipShape", () => {
+  const pts = clipShape(1.5, 2.5, 1.2).getPoints(24);
+  const radius = (p: { x: number; y: number }) => Math.hypot(p.x, p.y);
+  const angle = (p: { x: number; y: number }) => Math.abs(Math.atan2(p.y, p.x));
+
+  it("stays within the ring's outer radius and outside its hole", () => {
+    for (const p of pts) {
+      expect(radius(p)).toBeLessThanOrEqual(2.5 + 1e-6);
+      expect(radius(p)).toBeGreaterThanOrEqual(1.5 - 1e-6);
+    }
+  });
+
+  it("leaves the opening (centered on +x) clear, with rounded ends reaching into it", () => {
+    for (const p of pts) expect(angle(p)).toBeGreaterThan(0.3);
+    expect(pts.some((p) => angle(p) < 0.5)).toBe(true);
   });
 });
 

@@ -2,14 +2,14 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { DoubleSide, LatheGeometry, MathUtils, MeshStandardMaterial, type Group } from "three";
+import { DoubleSide, ExtrudeGeometry, LatheGeometry, MathUtils, MeshStandardMaterial, type Group } from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { activeStopIndex } from "@/lib/track";
 import { sceneState } from "@/lib/sceneState";
 import { useStore } from "@/lib/store";
 import { createRider, rideFlow } from "./flowRider";
 import { Brain, Cap, Clipboard, Laptop, PROP_AT_STOP, animateProps, type PropName } from "./AvatarProps";
-import { headProfile, taperTop, uvByHeight } from "./lego/shapes";
+import { clipShape, headProfile, taperTop, uvByHeight } from "./lego/shapes";
 import { LEGO, faceTexture, shirtTexture } from "./lego/prints";
 
 /** The figure is modelled in real minifig millimetres; ~37 mm stands ~1.2 units tall. */
@@ -20,8 +20,11 @@ const HEAD_Y = 31.4;
 const SHOULDER = { x: 6.6, y: 24.6 };
 const HIP = { x: 3.9, y: 11.5 };
 const HOLD = -1.0;
-/** Hand ring: axis across the body, opening forward and down like a real minifig hand. */
-const HAND_ROTATION: [number, number, number] = [0, Math.PI / 2, -0.575 * Math.PI];
+/** Hand clip: ring radii before the bevel adds 0.3 mm all round, and its thickness. */
+const HAND = { inner: 1.75, outer: 2.25, depth: 2.4, bevel: 0.3, gap: 1.25 };
+const HAND_OUTER = HAND.outer + HAND.bevel;
+/** Opening turned inward and down, toward the legs, like a real minifig hand. */
+const handRoll = (side: 1 | -1) => (side === 1 ? Math.PI + 0.75 : -0.75);
 
 function useLegoParts() {
   const parts = useMemo(() => {
@@ -46,6 +49,14 @@ function useLegoParts() {
       torso: taperTop(new RoundedBoxGeometry(15.6, 12.4, 7.8, 3, 0.9), 12 / 15.6),
       // phiStart = π puts u = 0.5 (the face print's center) at the front.
       head: uvByHeight(new LatheGeometry(headProfile(HEAD_R, HEAD_H, 0.9), 48, Math.PI), HEAD_H),
+      hand: new ExtrudeGeometry(clipShape(HAND.inner, HAND.outer, HAND.gap), {
+        depth: HAND.depth,
+        bevelEnabled: true,
+        bevelThickness: 0.35,
+        bevelSize: HAND.bevel,
+        bevelSegments: 4,
+        curveSegments: 28,
+      }).translate(0, 0, -HAND.depth / 2),
     };
     return { materials, geometries, textures: [face, print] };
   }, []);
@@ -63,8 +74,12 @@ function useLegoParts() {
 
 type Parts = ReturnType<typeof useLegoParts>;
 
-/** One arm on a shoulder pivot: grey sleeve, bare forearm bent forward, C-shaped hand. */
-function Arm({ side, pivot, m }: { side: 1 | -1; pivot: React.Ref<Group>; m: Parts["materials"] }) {
+/**
+ * One arm on a shoulder pivot: grey sleeve, bare forearm bent forward, then a wrist
+ * peg into a solid C-clip hand whose hole faces forward.
+ */
+function Arm({ side, pivot, parts }: { side: 1 | -1; pivot: React.Ref<Group>; parts: Parts }) {
+  const { materials: m, geometries: g } = parts;
   return (
     <group ref={pivot} position={[side * SHOULDER.x, SHOULDER.y, 0]}>
       <mesh material={m.shirt}>
@@ -75,12 +90,18 @@ function Arm({ side, pivot, m }: { side: 1 | -1; pivot: React.Ref<Group>; m: Par
           <cylinderGeometry args={[2.25, 2.0, 4.4, 16]} />
         </mesh>
         <group position={[0, -4.2, 0]} rotation={[-0.5, 0, 0]}>
-          <mesh material={m.skin} position={[0, -2.4, 0]}>
-            <cylinderGeometry args={[1.8, 1.6, 5, 16]} />
+          <mesh material={m.skin} position={[0, -2.0, 0]}>
+            <cylinderGeometry args={[1.8, 1.65, 4, 20]} />
           </mesh>
-          <mesh material={m.skin} position={[0, -6.3, 0]} rotation={HAND_ROTATION}>
-            <torusGeometry args={[1.5, 0.75, 10, 24, 1.65 * Math.PI]} />
+          <mesh material={m.skin} position={[0, -4.5, 0]}>
+            <cylinderGeometry args={[1.05, 1.05, 1.4, 16]} />
           </mesh>
+          <mesh
+            geometry={g.hand}
+            material={m.skin}
+            position={[0, -5.0 - HAND_OUTER + 0.2, 0]}
+            rotation={[0, 0, handRoll(side)]}
+          />
         </group>
       </group>
     </group>
@@ -94,7 +115,8 @@ function Arm({ side, pivot, m }: { side: 1 | -1; pivot: React.Ref<Group>; m: Par
  */
 export default function LegoMahdi() {
   const reducedMotion = useStore((s) => s.reducedMotion);
-  const { materials: m, geometries: g } = useLegoParts();
+  const parts = useLegoParts();
+  const { materials: m, geometries: g } = parts;
   const root = useRef<Group>(null);
   const body = useRef<Group>(null);
   const head = useRef<Group>(null);
@@ -188,8 +210,8 @@ export default function LegoMahdi() {
           <mesh material={m.skin} position={[0, 26.4, 0]}>
             <cylinderGeometry args={[2.6, 2.6, 1.4, 20]} />
           </mesh>
-          <Arm side={1} pivot={armL} m={m} />
-          <Arm side={-1} pivot={armR} m={m} />
+          <Arm side={1} pivot={armL} parts={parts} />
+          <Arm side={-1} pivot={armR} parts={parts} />
 
           <group ref={head} position={[0, HEAD_Y, 0]}>
             <mesh geometry={g.head} material={m.face} />

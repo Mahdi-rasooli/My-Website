@@ -1,4 +1,22 @@
-import { Vector2, type BufferGeometry } from "three";
+import { Shape, Vector2, type BufferGeometry } from "three";
+
+/**
+ * Cross-section of a minifig hand: a thick C with rounded ends, opening centered
+ * on +x. `gap` is the opening's angle in radians (measured at the ring's mid radius
+ * before the rounded ends, which reach a little into it).
+ */
+export function clipShape(inner: number, outer: number, gap: number): Shape {
+  const a0 = gap / 2;
+  const a1 = Math.PI * 2 - gap / 2;
+  const mid = (inner + outer) / 2;
+  const cap = (outer - inner) / 2;
+  const s = new Shape();
+  s.absarc(0, 0, outer, a0, a1, false);
+  s.absarc(mid * Math.cos(a1), mid * Math.sin(a1), cap, a1, a1 + Math.PI, false);
+  s.absarc(0, 0, inner, a1, a0, true);
+  s.absarc(mid * Math.cos(a0), mid * Math.sin(a0), cap, a0 + Math.PI, a0 + Math.PI * 2, false);
+  return s;
+}
 
 /**
  * Narrows the top of a geometry in x (the minifig torso's trapezoid), scaling
