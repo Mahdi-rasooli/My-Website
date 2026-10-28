@@ -19,12 +19,20 @@ const HEAD_H = 8.8;
 const HEAD_Y = 31.4;
 const SHOULDER = { x: 6.6, y: 24.6 };
 const HIP = { x: 3.9, y: 11.5 };
-const HOLD = -1.0;
-/** Hand clip: ring radii before the bevel adds 0.3 mm all round, and its thickness. */
-const HAND = { inner: 1.75, outer: 2.25, depth: 2.4, bevel: 0.3, gap: 1.25 };
+/** Arms raised forward to hold a prop; lower for the laptop so its screen clears his face. */
+const HOLD = { clipboard: -1.0, laptop: -0.7 };
+const HOLD_IN = 0.28;
+/**
+ * Hand clip, sized like the real part: after the 0.3 mm bevel the hole is 3.2 mm
+ * across (it grips a LEGO bar), the hand 5 mm wide and 3.1 mm tall, and the slot
+ * about 1.6 mm, narrower than the hole so a bar snaps in.
+ */
+const HAND = { inner: 1.9, outer: 2.2, depth: 2.4, bevel: 0.3, bevelHeight: 0.35, gap: 1.3 };
 const HAND_OUTER = HAND.outer + HAND.bevel;
-/** Opening turned inward and down, toward the legs, like a real minifig hand. */
-const handRoll = (side: 1 | -1) => (side === 1 ? Math.PI + 0.75 : -0.75);
+/** Undo the forearm's forward bend so the hole runs top to bottom, as on a real minifig. */
+const HAND_UPRIGHT = 0.45;
+/** Slot faces forward and a little inward, in the shape's plane before it is stood upright. */
+const slotAngle = (side: 1 | -1) => Math.atan2(-0.88, -side * 0.48);
 
 function useLegoParts() {
   const parts = useMemo(() => {
@@ -52,7 +60,7 @@ function useLegoParts() {
       hand: new ExtrudeGeometry(clipShape(HAND.inner, HAND.outer, HAND.gap), {
         depth: HAND.depth,
         bevelEnabled: true,
-        bevelThickness: 0.35,
+        bevelThickness: HAND.bevelHeight,
         bevelSize: HAND.bevel,
         bevelSegments: 4,
         curveSegments: 28,
@@ -93,15 +101,15 @@ function Arm({ side, pivot, parts }: { side: 1 | -1; pivot: React.Ref<Group>; pa
           <mesh material={m.skin} position={[0, -2.0, 0]}>
             <cylinderGeometry args={[1.8, 1.65, 4, 20]} />
           </mesh>
+          {/* Wrist peg, then the C-clip hand: its back wall takes the peg, the slot faces away. */}
           <mesh material={m.skin} position={[0, -4.5, 0]}>
-            <cylinderGeometry args={[1.05, 1.05, 1.4, 16]} />
+            <cylinderGeometry args={[1.15, 1.15, 1.2, 16]} />
           </mesh>
-          <mesh
-            geometry={g.hand}
-            material={m.skin}
-            position={[0, -5.0 - HAND_OUTER + 0.2, 0]}
-            rotation={[0, 0, handRoll(side)]}
-          />
+          <group position={[0, -5.1, 0]} rotation={[HAND_UPRIGHT, 0, 0]}>
+            <group position={[0, -0.4, HAND_OUTER - 0.55]} rotation={[-Math.PI / 2, 0, 0]}>
+              <mesh geometry={g.hand} material={m.skin} rotation={[0, 0, slotAngle(side)]} />
+            </group>
+          </group>
         </group>
       </group>
     </group>
@@ -159,16 +167,19 @@ export default function LegoMahdi() {
     const prop = PROP_AT_STOP[stop];
     const holding = prop === "laptop" || prop === "clipboard";
     const waving = (stop === 0 || stop === 6) && speed < 0.3;
-    armL.current.rotation.x = MathUtils.damp(armL.current.rotation.x, holding ? HOLD : -stride * 0.8, 12, delta);
+    const hold = prop === "laptop" ? HOLD.laptop : HOLD.clipboard;
+    armL.current.rotation.x = MathUtils.damp(armL.current.rotation.x, holding ? hold : -stride * 0.8, 12, delta);
     armR.current.rotation.x = MathUtils.damp(
       armR.current.rotation.x,
-      holding ? HOLD : waving ? 0 : stride * 0.8,
+      holding ? hold : waving ? 0 : stride * 0.8,
       12,
       delta,
     );
+    // Holding something, both arms swing in so its edges sit in the hand clips.
+    armL.current.rotation.z = MathUtils.damp(armL.current.rotation.z, holding ? -HOLD_IN : 0, 10, delta);
     armR.current.rotation.z = MathUtils.damp(
       armR.current.rotation.z,
-      waving ? -2.6 + Math.sin(t * 9) * 0.35 * anim : 0,
+      holding ? HOLD_IN : waving ? -2.6 + Math.sin(t * 9) * 0.35 * anim : 0,
       10,
       delta,
     );
@@ -241,12 +252,12 @@ export default function LegoMahdi() {
             </group>
           </group>
 
-          <group position={[0, 21.2, 9]} scale={1.4 / K}>
+          <group position={[0, 18.3, 9]} scale={1.4 / K}>
             <group ref={laptop} scale={0}>
               <Laptop />
             </group>
           </group>
-          <group position={[0, 21.5, 8.5]} scale={1.6 / K}>
+          <group position={[0, 20.3, 8.5]} scale={2 / K}>
             <group ref={clipboard} scale={0}>
               <Clipboard />
             </group>
