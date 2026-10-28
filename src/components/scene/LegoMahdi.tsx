@@ -2,37 +2,45 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { DoubleSide, ExtrudeGeometry, LatheGeometry, MathUtils, MeshStandardMaterial, type Group } from "three";
+import {
+  DoubleSide,
+  Euler,
+  ExtrudeGeometry,
+  LatheGeometry,
+  MathUtils,
+  MeshStandardMaterial,
+  Quaternion,
+  type Group,
+} from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { activeStopIndex } from "@/lib/track";
 import { sceneState } from "@/lib/sceneState";
 import { useStore } from "@/lib/store";
 import { createRider, rideFlow } from "./flowRider";
-import { Brain, Cap, Clipboard, Laptop, PROP_AT_STOP, animateProps, type PropName } from "./AvatarProps";
+import { Brain, Cap, Clipboard, PROP_AT_STOP, animateProps, type PropName } from "./AvatarProps";
 import { clipShape, headProfile, taperTop, uvByHeight } from "./lego/shapes";
 import { LEGO, faceTexture, shirtTexture } from "./lego/prints";
+import { ARM, HAND, HAND_REST, RING_OFFSET, gripRotation, ringCenter, slotAngle } from "./lego/rig";
+import LegoLaptop, { LAPTOP } from "./lego/LegoLaptop";
 
 /** The figure is modelled in real minifig millimetres; ~37 mm stands ~1.2 units tall. */
 const K = 0.0325;
 const HEAD_R = 5;
 const HEAD_H = 8.8;
 const HEAD_Y = 31.4;
-const SHOULDER = { x: 6.6, y: 24.6 };
 const HIP = { x: 3.9, y: 11.5 };
-/** Arms raised forward to hold a prop; lower for the laptop so its screen clears his face. */
-const HOLD = { clipboard: -1.0, laptop: -0.7 };
-const HOLD_IN = 0.28;
+/** Arms raised forward (x) and swung in (in) to hold a prop. */
+const HOLD = { clipboard: { x: -1.0, in: 0.28 }, laptop: { x: -0.7, in: 0.1 } };
+
 /**
- * Hand clip, sized like the real part: after the 0.3 mm bevel the hole is 3.2 mm
- * across (it grips a LEGO bar), the hand 5 mm wide and 3.1 mm tall, and the slot
- * about 1.6 mm, narrower than the hole so a bar snaps in.
+ * The laptop is fitted to his hands rather than the other way round: in the laptop pose
+ * the hands turn to grip a flat edge, and the base's side edges sit 0.4 mm inside each
+ * hand's hole. The hands hold its back half, so the lid clears his chest and chin.
  */
-const HAND = { inner: 1.9, outer: 2.2, depth: 2.4, bevel: 0.3, bevelHeight: 0.35, gap: 1.3 };
-const HAND_OUTER = HAND.outer + HAND.bevel;
-/** Undo the forearm's forward bend so the hole runs top to bottom, as on a real minifig. */
-const HAND_UPRIGHT = 0.45;
-/** Slot faces forward and a little inward, in the shape's plane before it is stood upright. */
-const slotAngle = (side: 1 | -1) => Math.atan2(-0.88, -side * 0.48);
+const laptopArm = new Euler(HOLD.laptop.x, 0, -HOLD.laptop.in);
+const LAPTOP_GRIP = ringCenter(1, laptopArm, gripRotation(1, laptopArm, new Quaternion()));
+const LAPTOP_WIDTH = 2 * (LAPTOP_GRIP.x + 0.4);
+const LAPTOP_POSITION: [number, number, number] = [0, LAPTOP_GRIP.y, LAPTOP_GRIP.z + LAPTOP.depth / 2 - 1.6];
 
 function useLegoParts() {
   const parts = useMemo(() => {
@@ -86,18 +94,28 @@ type Parts = ReturnType<typeof useLegoParts>;
  * One arm on a shoulder pivot: grey sleeve, bare forearm bent forward, then a wrist
  * peg into a solid C-clip hand whose hole faces forward.
  */
-function Arm({ side, pivot, parts }: { side: 1 | -1; pivot: React.Ref<Group>; parts: Parts }) {
+function Arm({
+  side,
+  pivot,
+  wrist,
+  parts,
+}: {
+  side: 1 | -1;
+  pivot: React.Ref<Group>;
+  wrist: React.Ref<Group>;
+  parts: Parts;
+}) {
   const { materials: m, geometries: g } = parts;
   return (
-    <group ref={pivot} position={[side * SHOULDER.x, SHOULDER.y, 0]}>
+    <group ref={pivot} position={[side * ARM.shoulder.x, ARM.shoulder.y, 0]}>
       <mesh material={m.shirt}>
         <sphereGeometry args={[2.3, 16, 12]} />
       </mesh>
-      <group rotation={[0, 0, side * 0.12]}>
+      <group rotation={[0, 0, side * ARM.splay]}>
         <mesh material={m.shirt} position={[0, -2.2, 0]}>
           <cylinderGeometry args={[2.25, 2.0, 4.4, 16]} />
         </mesh>
-        <group position={[0, -4.2, 0]} rotation={[-0.5, 0, 0]}>
+        <group position={[0, ARM.elbowY, 0]} rotation={[ARM.bend, 0, 0]}>
           <mesh material={m.skin} position={[0, -2.0, 0]}>
             <cylinderGeometry args={[1.8, 1.65, 4, 20]} />
           </mesh>
@@ -105,8 +123,8 @@ function Arm({ side, pivot, parts }: { side: 1 | -1; pivot: React.Ref<Group>; pa
           <mesh material={m.skin} position={[0, -4.5, 0]}>
             <cylinderGeometry args={[1.15, 1.15, 1.2, 16]} />
           </mesh>
-          <group position={[0, -5.1, 0]} rotation={[HAND_UPRIGHT, 0, 0]}>
-            <group position={[0, -0.4, HAND_OUTER - 0.55]} rotation={[-Math.PI / 2, 0, 0]}>
+          <group ref={wrist} position={[0, ARM.wristY, 0]} quaternion={HAND_REST}>
+            <group position={RING_OFFSET} rotation={[-Math.PI / 2, 0, 0]}>
               <mesh geometry={g.hand} material={m.skin} rotation={[0, 0, slotAngle(side)]} />
             </group>
           </group>
@@ -130,6 +148,8 @@ export default function LegoMahdi() {
   const head = useRef<Group>(null);
   const armL = useRef<Group>(null);
   const armR = useRef<Group>(null);
+  const wristL = useRef<Group>(null);
+  const wristR = useRef<Group>(null);
   const legL = useRef<Group>(null);
   const legR = useRef<Group>(null);
   const cap = useRef<Group>(null);
@@ -137,11 +157,12 @@ export default function LegoMahdi() {
   const brain = useRef<Group>(null);
   const clipboard = useRef<Group>(null);
   const rider = useRef(createRider());
-  const motion = useRef({ stop: -1, hopStart: -10 });
+  const motion = useRef({ stop: -1, hopStart: -10, grip: new Quaternion() });
 
   useFrame(({ camera, clock }, rawDelta) => {
     const r = root.current;
-    if (!r || !body.current || !head.current || !armL.current || !armR.current || !legL.current || !legR.current) return;
+    if (!r || !body.current || !head.current || !armL.current || !armR.current || !legL.current || !legR.current)
+      return;
     const delta = Math.min(rawDelta, 0.1);
     const t = clock.elapsedTime;
     if (!rideFlow(r, camera, delta, rider.current, reducedMotion)) return;
@@ -168,21 +189,31 @@ export default function LegoMahdi() {
     const holding = prop === "laptop" || prop === "clipboard";
     const waving = (stop === 0 || stop === 6) && speed < 0.3;
     const hold = prop === "laptop" ? HOLD.laptop : HOLD.clipboard;
-    armL.current.rotation.x = MathUtils.damp(armL.current.rotation.x, holding ? hold : -stride * 0.8, 12, delta);
+    armL.current.rotation.x = MathUtils.damp(armL.current.rotation.x, holding ? hold.x : -stride * 0.8, 12, delta);
     armR.current.rotation.x = MathUtils.damp(
       armR.current.rotation.x,
-      holding ? hold : waving ? 0 : stride * 0.8,
+      holding ? hold.x : waving ? 0 : stride * 0.8,
       12,
       delta,
     );
     // Holding something, both arms swing in so its edges sit in the hand clips.
-    armL.current.rotation.z = MathUtils.damp(armL.current.rotation.z, holding ? -HOLD_IN : 0, 10, delta);
+    armL.current.rotation.z = MathUtils.damp(armL.current.rotation.z, holding ? -hold.in : 0, 10, delta);
     armR.current.rotation.z = MathUtils.damp(
       armR.current.rotation.z,
-      holding ? HOLD_IN : waving ? -2.6 + Math.sin(t * 9) * 0.35 * anim : 0,
+      holding ? hold.in : waving ? -2.6 + Math.sin(t * 9) * 0.35 * anim : 0,
       10,
       delta,
     );
+
+    // For the laptop, the wrists turn so the base's edges slide into the hand clips.
+    const ease = 1 - Math.exp(-14 * delta);
+    for (const side of [1, -1] as const) {
+      const arm = side === 1 ? armL.current : armR.current;
+      const wrist = side === 1 ? wristL.current : wristR.current;
+      if (!wrist) continue;
+      const target = prop === "laptop" ? gripRotation(side, arm.rotation, s.grip) : HAND_REST;
+      wrist.quaternion.slerp(target, ease);
+    }
 
     // The classic minifig head swivel, following the cursor.
     head.current.rotation.y = MathUtils.damp(head.current.rotation.y, sceneState.pointer.x * 0.6 * anim, 5, delta);
@@ -221,8 +252,8 @@ export default function LegoMahdi() {
           <mesh material={m.skin} position={[0, 26.4, 0]}>
             <cylinderGeometry args={[2.6, 2.6, 1.4, 20]} />
           </mesh>
-          <Arm side={1} pivot={armL} parts={parts} />
-          <Arm side={-1} pivot={armR} parts={parts} />
+          <Arm side={1} pivot={armL} wrist={wristL} parts={parts} />
+          <Arm side={-1} pivot={armR} wrist={wristR} parts={parts} />
 
           <group ref={head} position={[0, HEAD_Y, 0]}>
             <mesh geometry={g.head} material={m.face} />
@@ -252,9 +283,9 @@ export default function LegoMahdi() {
             </group>
           </group>
 
-          <group position={[0, 18.3, 9]} scale={1.4 / K}>
+          <group position={LAPTOP_POSITION}>
             <group ref={laptop} scale={0}>
-              <Laptop />
+              <LegoLaptop width={LAPTOP_WIDTH} />
             </group>
           </group>
           <group position={[0, 20.3, 8.5]} scale={2 / K}>

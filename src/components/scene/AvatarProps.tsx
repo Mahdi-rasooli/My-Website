@@ -42,26 +42,6 @@ export function Cap() {
   );
 }
 
-/** Open laptop with a glowing screen, held in front. */
-export function Laptop() {
-  return (
-    <group>
-      <mesh>
-        <boxGeometry args={[0.3, 0.015, 0.2]} />
-        <Flat color="#a9b1bd" />
-      </mesh>
-      <mesh position={[0, 0.1, -0.1]} rotation={[-0.25, 0, 0]}>
-        <boxGeometry args={[0.3, 0.2, 0.012]} />
-        <Flat color="#a9b1bd" />
-      </mesh>
-      <mesh position={[0, 0.1, -0.092]} rotation={[-0.25, 0, 0]}>
-        <planeGeometry args={[0.26, 0.16]} />
-        <meshBasicMaterial color={CYAN} />
-      </mesh>
-    </group>
-  );
-}
-
 /** Glowing wireframe "brain" that floats above the head. */
 export function Brain() {
   return (
