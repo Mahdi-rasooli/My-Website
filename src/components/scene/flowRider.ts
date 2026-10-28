@@ -12,14 +12,37 @@ export interface Rider {
   prev: Vector3;
   target: Vector3;
   placed: boolean;
+  /** Direction of the last real movement (forward or back along the flow). */
+  travelYaw: number;
+  /** Current facing, turned smoothly toward where it should look. */
+  yaw: number;
 }
 
-export const createRider = (): Rider => ({ pop: 0, speed: 0, prev: new Vector3(), target: new Vector3(), placed: false });
+export const createRider = (): Rider => ({
+  pop: 0,
+  speed: 0,
+  prev: new Vector3(),
+  target: new Vector3(),
+  placed: false,
+  travelYaw: 0,
+  yaw: 0,
+});
+
+/** Signed turn from one angle to another, taking the short way round (−π..π). */
+export const shortestAngle = (from: number, to: number) => Math.atan2(Math.sin(to - from), Math.cos(to - from));
+
+/** Frame-rate independent damping between angles, always turning the short way. */
+export const dampAngle = (current: number, target: number, lambda: number, dt: number) =>
+  current + shortestAngle(current, target) * (1 - Math.exp(-lambda * dt));
+
+/** How far a walking avatar turns from the viewer toward where it is going. */
+const WALK_HEADING = 0.85;
 
 /**
  * Moves an avatar along the process flow for one frame: pops it in once the knot
- * is untangled, follows the scroll track, and turns it toward the camera
- * (a little toward the direction of travel while walking).
+ * is untangled and follows the scroll track. Like a game character on a stick, it
+ * turns to face the way it is actually moving (back toward the previous node when
+ * the visitor scrolls up), then turns back to the viewer when it stops.
  * Returns false while the avatar is hidden.
  */
 export function rideFlow(
@@ -40,6 +63,8 @@ export function rideFlow(
   const u = Math.max(0, avatarU(sceneState.track, reducedMotion) - U_BEHIND_NODE);
   mainCurve.getPointAt(u, r.target);
   r.target.y += 0.07;
+  const faceCam = Math.atan2(camera.position.x - root.position.x, camera.position.z - root.position.z);
+  if (!r.placed) r.yaw = faceCam + yawOffset;
   if (!r.placed || reducedMotion) {
     root.position.copy(r.target);
     r.placed = true;
@@ -52,8 +77,12 @@ export function rideFlow(
   );
   r.speed = MathUtils.damp(r.speed, Math.min(r.prev.distanceTo(root.position) / delta / 4, 1), 8, delta);
 
-  const faceCam = Math.atan2(camera.position.x - root.position.x, camera.position.z - root.position.z);
-  const tangent = mainCurve.getTangentAt(u);
-  root.rotation.y = yawOffset + MathUtils.lerp(faceCam, Math.atan2(tangent.x, tangent.z), r.speed * 0.45);
+  const dx = root.position.x - r.prev.x;
+  const dz = root.position.z - r.prev.z;
+  if (dx * dx + dz * dz > 1e-10) r.travelYaw = Math.atan2(dx, dz);
+  const walking = Math.min(r.speed * 2, 1) * WALK_HEADING;
+  const heading = faceCam + shortestAngle(faceCam, r.travelYaw) * walking;
+  r.yaw = reducedMotion ? faceCam + yawOffset : dampAngle(r.yaw, heading + yawOffset, 10, delta);
+  root.rotation.y = r.yaw;
   return true;
 }
