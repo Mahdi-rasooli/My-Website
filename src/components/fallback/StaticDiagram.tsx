@@ -1,3 +1,5 @@
+import { profile } from "@/content/profile";
+
 /** Flat SVG version of the process flow, shown behind the content when WebGL is unavailable. */
 export default function StaticDiagram() {
   const nodes = [
@@ -19,7 +21,7 @@ export default function StaticDiagram() {
             <circle r="26" fill="none" stroke="#5ce1e6" strokeOpacity="0.7" strokeWidth="2" />
             <rect x="-7" y="-7" width="14" height="14" transform="rotate(45)" fill="#5ce1e6" />
             <text y="-42" textAnchor="middle" fill="#7f93b2" fontFamily="monospace" fontSize="14">
-              {i < 4 ? `node 0${i + 1}` : "output"}
+              {i < 4 ? profile.nodes[i].title : "output"}
             </text>
           </g>
         ))}

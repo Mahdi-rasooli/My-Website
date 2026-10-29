@@ -17,11 +17,12 @@ import { activeStopIndex } from "@/lib/track";
 import { sceneState } from "@/lib/sceneState";
 import { useStore } from "@/lib/store";
 import { createRider, rideFlow } from "./flowRider";
-import { Brain, Cap, Clipboard, PROP_AT_STOP, animateProps, type PropName } from "./AvatarProps";
+import { Brain, Cap, PROP_AT_STOP, animateProps, type PropName } from "./AvatarProps";
 import { clipShape, headProfile, taperTop, uvByHeight } from "./lego/shapes";
 import { LEGO, faceTexture, shirtTexture } from "./lego/prints";
 import { ARM, HAND, HAND_REST, RING_OFFSET, gripRotation, ringCenter, slotAngle } from "./lego/rig";
 import LegoLaptop, { LAPTOP } from "./lego/LegoLaptop";
+import LegoTablet from "./lego/LegoTablet";
 
 /** The figure is modelled in real minifig millimetres; ~37 mm stands ~1.2 units tall. */
 const K = 0.0325;
@@ -30,7 +31,7 @@ const HEAD_H = 8.8;
 const HEAD_Y = 31.4;
 const HIP = { x: 3.9, y: 11.5 };
 /** Arms raised forward (x) and swung in (in) to hold a prop. */
-const HOLD = { clipboard: { x: -1.0, in: 0.28 }, laptop: { x: -0.7, in: 0.1 } };
+const HOLD = { tablet: { x: -1.0, in: 0.28 }, laptop: { x: -0.7, in: 0.1 } };
 
 /**
  * The laptop is fitted to his hands rather than the other way round: in the laptop pose
@@ -155,7 +156,7 @@ export default function LegoMahdi() {
   const cap = useRef<Group>(null);
   const laptop = useRef<Group>(null);
   const brain = useRef<Group>(null);
-  const clipboard = useRef<Group>(null);
+  const tablet = useRef<Group>(null);
   const rider = useRef(createRider());
   const motion = useRef({ stop: -1, hopStart: -10, grip: new Quaternion() });
 
@@ -190,9 +191,9 @@ export default function LegoMahdi() {
     legR.current.rotation.x = -stride;
 
     const prop = PROP_AT_STOP[stop];
-    const holding = prop === "laptop" || prop === "clipboard";
+    const holding = prop === "laptop" || prop === "tablet";
     const waving = (stop === 0 || stop === 6) && speed < 0.3;
-    const hold = prop === "laptop" ? HOLD.laptop : HOLD.clipboard;
+    const hold = prop === "laptop" ? HOLD.laptop : HOLD.tablet;
     armL.current.rotation.x = MathUtils.damp(
       armL.current.rotation.x,
       holding ? hold.x : cheering ? 0 : -stride * 0.8,
@@ -238,7 +239,7 @@ export default function LegoMahdi() {
       ["cap", cap.current],
       ["laptop", laptop.current],
       ["brain", brain.current],
-      ["clipboard", clipboard.current],
+      ["tablet", tablet.current],
     ];
     animateProps(props, prop, delta);
   });
@@ -302,9 +303,9 @@ export default function LegoMahdi() {
               <LegoLaptop width={LAPTOP_WIDTH} />
             </group>
           </group>
-          <group position={[0, 20.3, 8.5]} scale={2 / K}>
-            <group ref={clipboard} scale={0}>
-              <Clipboard />
+          <group position={[0, 20.3, 8.5]} rotation={[-0.3, 0, 0]}>
+            <group ref={tablet} scale={0}>
+              <LegoTablet />
             </group>
           </group>
         </group>

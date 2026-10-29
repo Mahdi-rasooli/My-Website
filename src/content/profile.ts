@@ -18,11 +18,12 @@ export interface Project {
 
 export interface JourneyNode {
   id: NodeId;
-  /** Two-digit label shown as the node ID, e.g. "01". */
-  index: string;
+  /** Short label above the title that says what the chapter is about, e.g. "graduated 2025". */
+  tag: string;
   title: string;
   subtitle: string;
-  period: string;
+  /** Optional dates shown beside the tag. */
+  period?: string;
   summary: string;
   bullets: string[];
   skills: string[];
@@ -64,67 +65,82 @@ export const profile: Profile = {
   nodes: [
     {
       id: "boot",
-      index: "01",
+      tag: "graduated 2025",
       title: "Boot sequence",
       subtitle: "B.Sc. Computer Science",
-      period: "2003 → TODO(mahdi): graduation year",
       summary:
         "Born on 3 September 2003. Studied Computer Science and learned to see every problem as a system of inputs, steps and outputs.",
-      bullets: [
-        "TODO(mahdi): University name",
-        "Algorithms, data structures, software engineering",
-        "TODO(mahdi): thesis / final project",
+      bullets: ["Science and Research Branch, Tehran", "Algorithms, data structures, software engineering"],
+      skills: ["Algorithms", "Data structures", "ML"],
+      projects: [
+        {
+          name: "Food-ordering website (final project)",
+          description: "Full-stack app with menu browsing, a cart and real-time order tracking.",
+          url: "https://github.com/Mahdi-rasooli/food-ordering-project",
+        },
       ],
-      skills: ["Algorithms", "Data structures", "Software design"],
     },
     {
       id: "web",
-      index: "02",
+      tag: "freelance · Avitec",
       title: "Web developer",
       subtitle: "Building interfaces people actually use",
-      period: "TODO(mahdi): start – end",
       summary:
-        "Shipped production websites and web apps, from pixel-level UI to the logic behind it.",
+        "Shipped websites and web apps as a freelancer and at Avitec, from pixel-level UI to the logic behind it.",
       bullets: [
-        "TODO(mahdi): company name and what you built there",
+        "Freelance projects, then web development at Avitec",
         "Responsive, accessible front-ends",
         "Performance-minded, component-driven code",
       ],
-      skills: ["TypeScript", "React", "Next.js", "HTML & CSS", "REST APIs"],
+      skills: ["TypeScript", "React", "Next.js", "HTML & CSS", "REST APIs", "Express", "MongoDB"],
       projects: [
-        { name: "TODO(mahdi): Project one", description: "One line on what it does and your part in it." },
-        { name: "TODO(mahdi): Project two", description: "One line on what it does and your part in it." },
+        {
+          name: "Job portal",
+          description:
+            "Full-stack job board: search and apply for jobs, separate dashboards for job seekers and employers, role-based authentication.",
+          url: "https://github.com/Mahdi-rasooli/job-portal",
+        },
+        { name: "Study management", description: "A study-management web app." },
       ],
     },
     {
       id: "ml",
-      index: "03",
+      tag: "machine learning with python",
       title: "Machine learning",
       subtitle: "Teaching systems to learn from data",
-      period: "TODO(mahdi): year",
       summary:
         "Completed a machine-learning course and built models end to end: data cleaning, feature engineering, training and evaluation.",
       bullets: [
-        "TODO(mahdi): course name / provider",
+        "Course: Machine Learning with Python",
         "Supervised & unsupervised learning",
-        "TODO(mahdi): one ML project you are proud of",
+        "Data cleaning, feature engineering and model evaluation",
       ],
       skills: ["Python", "scikit-learn", "Pandas", "Model evaluation", "Neural networks"],
+      projects: [
+        { name: "Tehran house-price prediction", description: "A model that predicts house prices in Tehran." },
+      ],
     },
     {
       id: "avitec",
-      index: "04",
+      tag: "systems & methods",
       title: "Avitec",
-      subtitle: "Systems & Methods",
-      period: "TODO(mahdi): start → now",
+      subtitle: "From web development to designing processes",
+      period: "2025 → now",
       summary:
-        "Designing, modelling and optimizing how the company works, and using AI to make those processes faster, leaner and smarter.",
+        "Started on the web team, then moved to Systems & Methods: designing and modelling how the company works, and using AI to make those processes faster, leaner and smarter.",
       bullets: [
-        "Map and model end-to-end business processes",
-        "Find bottlenecks and redesign the flow",
-        "Apply AI to automate and optimize process steps",
+        "Model end-to-end business processes on the APQC framework",
+        "Integrated management system (IMS): ISO 9001, 14001 and 45001",
+        "Find bottlenecks, redesign the flow and automate steps with AI",
       ],
-      skills: ["Process modelling", "BPMN", "Process optimization", "AI automation", "Systems thinking"],
+      skills: [
+        "Process modelling",
+        "BPMN",
+        "APQC",
+        "ISO 9001 / 14001 / 45001 (IMS)",
+        "AI automation",
+        "Systems thinking",
+      ],
       metrics: [
         { value: "TODO", label: "processes modelled" },
         { value: "TODO%", label: "cycle time saved" },
@@ -135,7 +151,7 @@ export const profile: Profile = {
   links: {
     email: "TODO(mahdi): you@example.com",
     linkedin: "TODO(mahdi): https://www.linkedin.com/in/your-handle",
-    github: "TODO(mahdi): https://github.com/your-handle",
+    github: "https://github.com/Mahdi-rasooli",
     resumeUrl: "/resume.pdf",
   },
   game: {

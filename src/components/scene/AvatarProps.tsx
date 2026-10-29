@@ -2,11 +2,10 @@
 
 import { MathUtils, type Group } from "three";
 
-const CYAN = "#5ce1e6";
 const AMBER = "#ffb547";
 
 /** Which prop the avatar shows at each stop: hero, boot, web, ml, avitec, game, contact. */
-export const PROP_AT_STOP = ["cap", "cap", "laptop", "brain", "clipboard", "none", "none"] as const;
+export const PROP_AT_STOP = ["cap", "cap", "laptop", "brain", "tablet", "none", "none"] as const;
 export type PropName = Exclude<(typeof PROP_AT_STOP)[number], "none">;
 
 export function Flat({ color, emissive }: { color: string; emissive?: string }) {
@@ -54,28 +53,6 @@ export function Brain() {
         <icosahedronGeometry args={[0.07, 1]} />
         <meshBasicMaterial color={AMBER} transparent opacity={0.5} />
       </mesh>
-    </group>
-  );
-}
-
-/** Clipboard with a process checklist. */
-export function Clipboard() {
-  return (
-    <group rotation={[-0.3, -0.3, 0]}>
-      <mesh>
-        <boxGeometry args={[0.17, 0.23, 0.015]} />
-        <Flat color="#7b5b3a" />
-      </mesh>
-      <mesh position={[0, -0.01, 0.009]}>
-        <planeGeometry args={[0.14, 0.18]} />
-        <meshBasicMaterial color="#e8f1ff" />
-      </mesh>
-      {[0.04, 0.0, -0.04].map((y) => (
-        <mesh key={y} position={[0, y, 0.011]}>
-          <planeGeometry args={[0.1, 0.012]} />
-          <meshBasicMaterial color={CYAN} />
-        </mesh>
-      ))}
     </group>
   );
 }

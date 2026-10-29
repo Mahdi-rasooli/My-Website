@@ -9,8 +9,8 @@ export default function NodeCard({ node, active }: { node: JourneyNode; active: 
       }`}
     >
       <p className="flex flex-wrap items-baseline gap-x-3 font-mono text-xs">
-        <span className="text-cyan">node {node.index}</span>
-        <Fill text={node.period} className="text-muted" />
+        <span className="text-cyan">{node.tag}</span>
+        {node.period && <span className="text-muted">{node.period}</span>}
       </p>
 
       <h2 className="mt-4 text-3xl leading-tight font-extrabold [font-variation-settings:'wdth'_112] md:text-4xl">

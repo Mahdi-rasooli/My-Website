@@ -49,7 +49,7 @@ flowchart LR
 
 <table>
   <tr>
-    <td width="42%"><img src="docs/readme/minifig.png" alt="LEGO minifigure of Mahdi holding a clipboard" width="100%"></td>
+    <td width="42%"><img src="docs/readme/minifig.png" alt="LEGO minifigure of Mahdi holding a tablet with a process diagram" width="100%"></td>
     <td>
       <b>Set 0309 · Mahdi</b><br>
       <sub>(named after 03/09, my birthday)</sub>
@@ -63,7 +63,7 @@ flowchart LR
       2 × white sneakers
       <br><br>
       <b>Swapped in for each chapter</b><br>
-      graduation cap · laptop · glowing brain · clipboard
+      graduation cap · laptop · glowing brain · tablet running a process diagram
       <br><br>
       <sub>No 3D model file anywhere: every brick, print and prop is generated in code from real minifig proportions, so he costs the page almost nothing to load.</sub>
     </td>

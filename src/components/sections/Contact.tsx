@@ -31,7 +31,7 @@ export default function Contact() {
       data-stop={6}
       className="flex min-h-svh flex-col items-center justify-end px-5 pb-12 text-center md:pb-16"
     >
-      <p className="font-mono text-xs text-cyan">node 05 / output</p>
+      <p className="font-mono text-xs text-cyan">output</p>
       <h2 className="mt-5 max-w-[16ch] text-[clamp(2.5rem,6vw,5rem)] leading-[0.95] font-extrabold [font-variation-settings:'wdth'_118]">
         Got a messy process? Let&apos;s talk.
       </h2>

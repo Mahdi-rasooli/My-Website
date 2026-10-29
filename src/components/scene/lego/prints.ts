@@ -180,6 +180,95 @@ export function codeTexture() {
 }
 
 /**
+ * Tablet screen at Avitec: a process diagram running down the screen, ISO's
+ * Plan → Do → Check → Act cycle drawn as BPMN (start, tasks, a decision, end).
+ * 260 × 340 ≈ the screen's proportions; FLOW_POINTS are the stops a token rides through.
+ */
+export const FLOW_POINTS: [number, number][] = [
+  [130, 52],
+  [130, 102],
+  [130, 152],
+  [130, 204],
+  [130, 256],
+  [130, 300],
+];
+
+export function processTexture() {
+  const [c, ctx] = canvas(260, 340);
+  ctx.fillStyle = "#0b1626";
+  ctx.fillRect(0, 0, c.width, c.height);
+  ctx.strokeStyle = "#3a5878";
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(130, 52);
+  ctx.lineTo(130, 300);
+  ctx.stroke();
+
+  ctx.font = "bold 17px monospace";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const task = (y: number, label: string) => {
+    ctx.fillStyle = "#13233a";
+    ctx.strokeStyle = LEGO.cyan;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.roundRect(70, y - 17, 120, 34, 8);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#e8f1ff";
+    ctx.fillText(label, 130, y + 1);
+  };
+
+  // start event, tasks, a decision diamond, end event
+  ctx.strokeStyle = LEGO.cyan;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.arc(130, 52, 13, 0, Math.PI * 2);
+  ctx.fillStyle = "#0b1626";
+  ctx.fill();
+  ctx.stroke();
+  task(102, "PLAN");
+  task(152, "DO");
+  ctx.beginPath();
+  ctx.moveTo(130, 178);
+  ctx.lineTo(160, 204);
+  ctx.lineTo(130, 230);
+  ctx.lineTo(100, 204);
+  ctx.closePath();
+  ctx.fillStyle = "#13233a";
+  ctx.fill();
+  ctx.strokeStyle = LEGO.amber;
+  ctx.stroke();
+  ctx.fillStyle = LEGO.amber;
+  ctx.font = "bold 13px monospace";
+  ctx.fillText("✓?", 130, 205);
+  ctx.font = "bold 17px monospace";
+  task(256, "ACT");
+  ctx.beginPath();
+  ctx.arc(130, 300, 14, 0, Math.PI * 2);
+  ctx.fillStyle = LEGO.amber;
+  ctx.fill();
+
+  // The loop back from the decision, and an ISO badge.
+  ctx.strokeStyle = "#3a5878";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(160, 204);
+  ctx.lineTo(214, 204);
+  ctx.lineTo(214, 102);
+  ctx.lineTo(192, 102);
+  ctx.stroke();
+  ctx.fillStyle = LEGO.cyan;
+  ctx.beginPath();
+  ctx.roundRect(16, 312, 64, 20, 10);
+  ctx.fill();
+  ctx.fillStyle = "#060e1a";
+  ctx.font = "bold 12px monospace";
+  ctx.fillText("ISO ✓", 48, 323);
+  return texture(c);
+}
+
+/**
  * Tee print for the torso front: neck showing through the crew collar and a tiny
  * process-flow logo on the chest. Clipped to the torso's trapezoid, 20 px per mm.
  */
