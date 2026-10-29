@@ -139,9 +139,9 @@ export const profile: Profile = {
     resumeUrl: "/resume.pdf",
   },
   game: {
-    title: "Bottleneck Rush",
+    title: "Untangle the pipeline",
     intro:
-      "This is my job, in miniature. Requests are piling up at one slow step and the line is choking. Find the bottleneck and get it flowing with as few changes as possible.",
+      "This is my job, in miniature. A messy process is a tangle of steps that don't connect. Turn the pipes until the work flows straight from input to output. Three boards, each a little messier.",
     punchline: "Not bad. Imagine what I'd do with your company's processes.",
   },
 };
