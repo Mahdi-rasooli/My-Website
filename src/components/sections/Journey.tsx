@@ -13,7 +13,7 @@ export default function Journey() {
         <section
           key={node.id}
           data-stop={i + 1}
-          className="flex min-h-svh items-end px-5 py-16 md:items-center md:px-12 lg:px-20"
+          className="flex min-h-svh items-end px-4 pt-16 pb-6 md:items-center md:px-12 md:py-16 lg:px-20"
         >
           <NodeCard node={node} active={activeStop === i + 1} />
         </section>

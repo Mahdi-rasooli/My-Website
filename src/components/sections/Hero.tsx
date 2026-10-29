@@ -25,7 +25,7 @@ export default function Hero() {
         className="pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-linear-to-t from-bg-deep via-bg-deep/75 to-transparent md:hidden"
       />
       <div className="relative max-w-3xl">
-        <h1 className="wordmark text-[clamp(2.9rem,6vw,5.75rem)] leading-[0.92] font-extrabold uppercase">
+        <h1 className="wordmark text-[clamp(2.9rem,6vw,5.75rem)] leading-[0.92] font-extrabold">
           {/* One gradient across all three lines, so it flows from "I'm" into the name. */}
           <GradientText className="block">
             <span className="block">I&apos;m {profile.firstName}</span>

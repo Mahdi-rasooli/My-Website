@@ -2,9 +2,6 @@ import { MathUtils, Vector3, type Camera, type Object3D } from "three";
 import { avatarU, mainCurve } from "@/lib/world";
 import { sceneState } from "@/lib/sceneState";
 
-/** Stand just before each node ring so the avatar never clips through it. */
-const U_BEHIND_NODE = 0.02;
-
 export interface Rider {
   pop: number;
   /** 0 = standing still, 1 = walking at full pace. */
@@ -60,8 +57,7 @@ export function rideFlow(
   root.visible = r.pop > 0.001;
   if (!root.visible) return false;
 
-  const u = Math.max(0, avatarU(sceneState.track, reducedMotion) - U_BEHIND_NODE);
-  mainCurve.getPointAt(u, r.target);
+  mainCurve.getPointAt(avatarU(sceneState.track, reducedMotion), r.target);
   r.target.y += 0.07;
   const faceCam = Math.atan2(camera.position.x - root.position.x, camera.position.z - root.position.z);
   if (!r.placed) r.yaw = faceCam + yawOffset;

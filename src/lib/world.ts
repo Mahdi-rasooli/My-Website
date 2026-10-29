@@ -39,15 +39,22 @@ export const NODE_US: readonly number[] = NODE_POSITIONS.map((node) => {
   return best;
 });
 
+/**
+ * How far before a node the avatar stops, in world units along the flow: right up to the
+ * node's ring, the same at every node, without the ring cutting through him.
+ */
+export const AVATAR_GAP = 0.5;
+const atNode = (n: number) => NODE_US[n] - AVATAR_GAP / mainCurve.getLength();
+
 /** Avatar position on the curve for each stop (hero … contact). */
 const AVATAR_STOP_US = [
-  NODE_US[0],
-  NODE_US[0],
-  NODE_US[1],
-  NODE_US[2],
-  NODE_US[3],
+  atNode(0),
+  atNode(0),
+  atNode(1),
+  atNode(2),
+  atNode(3),
   (NODE_US[3] + NODE_US[4]) / 2,
-  NODE_US[4],
+  atNode(4),
 ];
 
 export function avatarU(track: number, reducedMotion = false): number {

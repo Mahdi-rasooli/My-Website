@@ -25,7 +25,15 @@ export default function ScrollDriver() {
     store().setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
     let centers: number[] = [];
+    // Phone browsers resize the viewport by an address bar's height as it slides in and out.
+    // Ignoring changes that small stops them from nudging the track mid-scroll.
+    let viewWidth = window.innerWidth;
+    let viewHeight = window.innerHeight;
     const measure = () => {
+      if (window.innerWidth !== viewWidth || Math.abs(window.innerHeight - viewHeight) > 150) {
+        viewWidth = window.innerWidth;
+        viewHeight = window.innerHeight;
+      }
       centers = Array.from(document.querySelectorAll<HTMLElement>("[data-stop]"))
         .sort((a, b) => Number(a.dataset.stop) - Number(b.dataset.stop))
         .map((el) => {
@@ -35,7 +43,7 @@ export default function ScrollDriver() {
     };
 
     const update = () => {
-      const track = trackFromScroll(window.scrollY + window.innerHeight / 2, centers);
+      const track = trackFromScroll(window.scrollY + viewHeight / 2, centers);
       sceneState.velocity = track - sceneState.track;
       sceneState.track = track;
       const stop = activeStopIndex(track);

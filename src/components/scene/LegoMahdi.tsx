@@ -163,8 +163,7 @@ function Arm({
 /**
  * Mahdi as a LEGO minifigure: short quiff, heavy brows, stubble beard, an open coral bomber
  * over a cream tee, slim jeans and amber-soled sneakers. He walks the flow, turns his head
- * toward the cursor, hops at each new node,
- * waves hello and goodbye, and holds or wears each chapter's prop.
+ * toward the cursor, waves hello and goodbye, and holds or wears each chapter's prop.
  */
 export default function LegoMahdi() {
   const reducedMotion = useStore((s) => s.reducedMotion);
@@ -184,7 +183,7 @@ export default function LegoMahdi() {
   const brain = useRef<Group>(null);
   const tablet = useRef<Group>(null);
   const rider = useRef(createRider());
-  const motion = useRef({ stop: -1, hopStart: -10, grip: new Quaternion(), say: null as string | null });
+  const motion = useRef({ grip: new Quaternion(), say: null as string | null });
   const [say, setSay] = useState<string | null>(null);
   const speak = (line: string | null) => {
     if (line === motion.current.say) return;
@@ -206,18 +205,16 @@ export default function LegoMahdi() {
     const s = motion.current;
     const speed = rider.current.speed;
 
-    // A little hop whenever a new stop is reached.
     const stop = activeStopIndex(sceneState.track);
-    if (stop !== s.stop) {
-      if (s.stop !== -1 && anim) s.hopStart = t;
-      s.stop = stop;
-    }
-    const k = (t - s.hopStart) / 0.45;
     // Won the mini-game: a few seconds of arms-up bouncing at the game stop.
     const cheering = stop === 5 && performance.now() / 1000 - sceneState.celebratedAt < 3;
     const cheerArm = 2.7 + Math.sin(t * 10) * 0.25 * anim;
-    body.current.position.y =
-      cheering && anim ? Math.abs(Math.sin(t * 7)) * 3 : k < 1 ? Math.sin(k * Math.PI) * 3.5 : 0;
+    body.current.position.y = MathUtils.damp(
+      body.current.position.y,
+      cheering && anim ? Math.abs(Math.sin(t * 7)) * 3 : 0,
+      20,
+      delta,
+    );
     body.current.rotation.x = MathUtils.damp(body.current.rotation.x, speed * 0.12 * anim, 6, delta);
 
     // Walk cycle: legs scissor, arms swing against them.
@@ -288,7 +285,7 @@ export default function LegoMahdi() {
 
   return (
     <group ref={root} visible={false}>
-      {say && <SpeechBubble text={say} mouth={MOUTH} />}
+      {say && <SpeechBubble text={say} mouth={MOUTH} left={say === GREETINGS[0]} />}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.002, 0]}>
         <circleGeometry args={[0.36, 32]} />
         <meshBasicMaterial color={LEGO.cyan} transparent opacity={0.14} />
