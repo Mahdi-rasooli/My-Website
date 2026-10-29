@@ -125,7 +125,7 @@ function Arm({
   return (
     <group ref={pivot} position={[side * ARM.shoulder.x, ARM.shoulder.y, 0]}>
       <mesh material={m.jacket}>
-        <sphereGeometry args={[2.3, 16, 12]} />
+        <sphereGeometry args={[2.15, 16, 12]} />
       </mesh>
       <group rotation={[0, 0, side * ARM.splay]}>
         <mesh material={m.jacket} position={[0, -2.2, 0]}>
@@ -301,25 +301,25 @@ export default function LegoMahdi() {
           <group ref={head} position={[0, HEAD_Y, 0]}>
             <mesh geometry={g.head} material={m.face} />
             {/* Hair: a dome, a shell over the back and sides, and a quiff swept to one side. */}
-            <mesh material={m.hair} position={[0, 2.4, 0]} scale={[1, 0.62, 1]}>
+            <mesh material={m.hair} position={[0, 2.4, 0]} scale={[1, 0.85, 1]}>
               <sphereGeometry args={[5.45, 32, 16, 0, Math.PI * 2, 0, 1.5]} />
             </mesh>
             <mesh material={m.hairShell} position={[0, 1.3, 0]}>
               <cylinderGeometry args={[5.42, 5.42, 3.7, 32, 1, true, Math.PI / 2 - 0.5, Math.PI + 1]} />
             </mesh>
-            <mesh material={m.hair} position={[0.9, 4.1, 3.2]} rotation={[0.35, 0, -0.18]} scale={[3.4, 1.35, 1.9]}>
+            <mesh material={m.hair} position={[0.9, 5.2, 3.2]} rotation={[0.35, 0, -0.18]} scale={[3.4, 1.6, 1.9]}>
               <sphereGeometry args={[1, 20, 14]} />
             </mesh>
-            <mesh material={m.hair} position={[-2.2, 3.9, 3.2]} rotation={[0.3, 0.3, 0.1]} scale={[2.7, 1.2, 1.8]}>
+            <mesh material={m.hair} position={[-2.2, 4.8, 3.2]} rotation={[0.3, 0.3, 0.1]} scale={[2.7, 1.4, 1.8]}>
               <sphereGeometry args={[1, 20, 14]} />
             </mesh>
 
-            <group position={[0, 5.6, 0]} rotation={[-0.08, 0, 0.06]} scale={1.15 / K}>
+            <group position={[0, 6.8, 0]} rotation={[-0.08, 0, 0.06]} scale={1.15 / K}>
               <group ref={cap} scale={0}>
                 <Cap />
               </group>
             </group>
-            <group position={[0, 10.5, 0]} scale={1.2 / K}>
+            <group position={[0, 11.6, 0]} scale={1.2 / K}>
               <group ref={brain} scale={0}>
                 <Brain />
               </group>

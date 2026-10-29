@@ -1,7 +1,7 @@
 import { Euler, Matrix4, Quaternion, Vector3 } from "three";
 
 /** Arm joints in minifig millimetres: shoulder pivot, splay, elbow bend and wrist. */
-export const ARM = { shoulder: { x: 6.6, y: 24.6 }, splay: 0.12, elbowY: -4.2, bend: -0.5, wristY: -5.1 };
+export const ARM = { shoulder: { x: 6.2, y: 23.4 }, splay: 0.12, elbowY: -4.2, bend: -0.5, wristY: -5.1 };
 
 /**
  * Hand clip, sized like the real part: after the 0.3 mm bevel the hole is 3.2 mm
