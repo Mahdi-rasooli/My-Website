@@ -24,15 +24,26 @@ export const SLOT_DIR = (side: 1 | -1) => new Vector3(Math.cos(slotAngle(side)),
 const UP = new Vector3(0, 1, 0);
 const FORWARD = new Vector3(0, 0, 1);
 
-/** Body-space hand orientation for gripping a flat edge: hole front to back, slot toward the other hand. */
-function gripTarget(side: 1 | -1) {
+/**
+ * Body-space hand orientation for gripping a flat edge: the hole runs along `edge`
+ * (which must be square to the body's sideways axis) and the slot faces the other hand.
+ */
+function gripTarget(side: 1 | -1, edge: Vector3) {
   const slot = SLOT_DIR(side);
   const local = new Matrix4().makeBasis(UP, slot, new Vector3().crossVectors(UP, slot));
   const inward = new Vector3(-side, 0, 0);
-  const body = new Matrix4().makeBasis(FORWARD, inward, new Vector3().crossVectors(FORWARD, inward));
+  const body = new Matrix4().makeBasis(edge, inward, new Vector3().crossVectors(edge, inward));
   return new Quaternion().setFromRotationMatrix(body.multiply(local.transpose()));
 }
-const GRIP = { [1]: gripTarget(1), [-1]: gripTarget(-1) } as const;
+const grips = new WeakMap<Vector3, Record<1 | -1, Quaternion>>();
+function gripFor(side: 1 | -1, edge: Vector3) {
+  let pair = grips.get(edge);
+  if (!pair) {
+    pair = { [1]: gripTarget(1, edge), [-1]: gripTarget(-1, edge) };
+    grips.set(edge, pair);
+  }
+  return pair[side];
+}
 
 const _e = new Euler();
 const _q = new Quaternion();
@@ -44,9 +55,12 @@ export function armChain(side: 1 | -1, arm: Euler, out: Quaternion): Quaternion 
   return out.multiply(_q.setFromEuler(_e.set(ARM.bend, 0, 0)));
 }
 
-/** Wrist rotation (in the forearm frame) that turns the hand to grip a flat edge, for the given arm pose. */
-export function gripRotation(side: 1 | -1, arm: Euler, out: Quaternion): Quaternion {
-  return armChain(side, arm, out).invert().multiply(GRIP[side]);
+/**
+ * Wrist rotation (in the forearm frame) that turns the hand to grip a flat edge running
+ * along `edge` (front to back by default, like a laptop's sides), for the given arm pose.
+ */
+export function gripRotation(side: 1 | -1, arm: Euler, out: Quaternion, edge: Vector3 = FORWARD): Quaternion {
+  return armChain(side, arm, out).invert().multiply(gripFor(side, edge));
 }
 
 /** Body-space center of a hand's ring for an arm pose and wrist rotation. */

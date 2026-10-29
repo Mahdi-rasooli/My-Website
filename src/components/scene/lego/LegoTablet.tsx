@@ -7,37 +7,36 @@ import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeom
 import { useStore } from "@/lib/store";
 import { FLOW_POINTS, LEGO, processTexture } from "./prints";
 
-/** Tablet size in minifig millimetres; its side edges sit at the hands in the holding pose. */
-export const TABLET = { width: 10.4, height: 13.6, depth: 0.9 };
-const SCREEN = { width: TABLET.width - 1.2, height: TABLET.height - 1.6 };
-/** Canvas pixel → screen millimetres (the texture is 260 × 340). */
-const toScreen = ([x, y]: [number, number]) =>
-  [(x / 260 - 0.5) * SCREEN.width, (0.5 - y / 340) * SCREEN.height] as const;
-const STOPS = FLOW_POINTS.map(toScreen);
+/** Tablet height and thickness in minifig millimetres; its width is fitted to the hands. */
+export const TABLET = { height: 13.6, depth: 0.9 };
 const SECONDS_PER_STEP = 0.55;
 
 /**
  * A minifig-scale tablet showing a live process diagram (Plan → Do → Check → Act),
  * with an amber token running through it. Origin at the tablet's center.
  */
-export default function LegoTablet() {
+export default function LegoTablet({ width }: { width: number }) {
   const reducedMotion = useStore((s) => s.reducedMotion);
   const token = useRef<Mesh>(null);
   const parts = useMemo(() => {
+    const screen = { width: width - 1.2, height: TABLET.height - 1.6 };
     const map = processTexture();
     return {
+      screen,
+      // Canvas pixel → screen millimetres (the texture is 260 × 340).
+      stops: FLOW_POINTS.map(([x, y]) => [(x / 260 - 0.5) * screen.width, (0.5 - y / 340) * screen.height] as const),
       map,
       shell: new MeshStandardMaterial({ color: "#2a303b", roughness: 0.4, metalness: 0.1 }),
-      screen: new MeshBasicMaterial({ map, toneMapped: false }),
-      body: new RoundedBoxGeometry(TABLET.width, TABLET.height, TABLET.depth, 2, 0.45),
+      screenMaterial: new MeshBasicMaterial({ map, toneMapped: false }),
+      body: new RoundedBoxGeometry(width, TABLET.height, TABLET.depth, 2, 0.45),
     };
-  }, []);
+  }, [width]);
 
   useEffect(
     () => () => {
       parts.map.dispose();
       parts.shell.dispose();
-      parts.screen.dispose();
+      parts.screenMaterial.dispose();
       parts.body.dispose();
     },
     [parts],
@@ -46,18 +45,19 @@ export default function LegoTablet() {
   useFrame(({ clock }) => {
     const t = token.current;
     if (!t) return;
+    const stops = parts.stops;
     if (reducedMotion) {
-      t.position.set(STOPS[0][0], STOPS[0][1], t.position.z);
+      t.position.set(stops[0][0], stops[0][1], t.position.z);
       return;
     }
     // Ride from stop to stop with a short pause at each, rest at the end, then start again.
-    const steps = STOPS.length - 1;
+    const steps = stops.length - 1;
     const p = (clock.elapsedTime / SECONDS_PER_STEP) % (steps + 1);
     const i = Math.min(Math.floor(p), steps - 1);
     const k = Math.min(1, (p - Math.floor(p)) * 1.6);
     const eased = p >= steps ? 1 : k * k * (3 - 2 * k);
-    const [ax, ay] = STOPS[i];
-    const [bx, by] = STOPS[i + 1];
+    const [ax, ay] = stops[i];
+    const [bx, by] = stops[i + 1];
     t.position.set(ax + (bx - ax) * eased, ay + (by - ay) * eased, t.position.z);
   });
 
@@ -65,10 +65,10 @@ export default function LegoTablet() {
   return (
     <group>
       <mesh geometry={parts.body} material={parts.shell} />
-      <mesh material={parts.screen} position={[0, 0.1, front + 0.01]}>
-        <planeGeometry args={[SCREEN.width, SCREEN.height]} />
+      <mesh material={parts.screenMaterial} position={[0, 0.1, front + 0.01]}>
+        <planeGeometry args={[parts.screen.width, parts.screen.height]} />
       </mesh>
-      <mesh ref={token} position={[STOPS[0][0], STOPS[0][1], front + 0.25]}>
+      <mesh ref={token} position={[parts.stops[0][0], parts.stops[0][1], front + 0.25]}>
         <sphereGeometry args={[0.5, 16, 12]} />
         <meshBasicMaterial color={LEGO.amber} toneMapped={false} />
       </mesh>

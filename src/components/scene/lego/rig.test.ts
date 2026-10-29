@@ -60,4 +60,15 @@ describe("gripRotation", () => {
       expect(slot.distanceTo(new Vector3(-side, 0, 0))).toBeLessThan(1e-9);
     }
   });
+
+  it("can grip an edge running in another direction, like a tablet's tilted sides", () => {
+    const edge = new Vector3(0, Math.cos(0.3), -Math.sin(0.3));
+    for (const side of [1, -1] as const) {
+      const world = armChain(side, pose(side), new Quaternion()).multiply(
+        gripRotation(side, pose(side), new Quaternion(), edge),
+      );
+      expect(new Vector3(0, 1, 0).applyQuaternion(world).distanceTo(edge)).toBeLessThan(1e-9);
+      expect(SLOT_DIR(side).applyQuaternion(world).distanceTo(new Vector3(-side, 0, 0))).toBeLessThan(1e-9);
+    }
+  });
 });

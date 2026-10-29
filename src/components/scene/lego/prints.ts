@@ -3,10 +3,13 @@ import { CanvasTexture, SRGBColorSpace } from "three";
 export const LEGO = {
   skin: "#f0c9a2",
   hair: "#2b1d15",
-  shirt: "#8b9096",
-  collar: "#6b7078",
+  /** Coral bomber jacket over a cream tee, navy-and-amber rib, mid-blue slim jeans. */
+  jacket: "#d9774f",
+  jacketDark: "#a95436",
+  tee: "#f3efe6",
+  rib: "#1f2d47",
   jeans: "#41608f",
-  shoes: "#e3e7ee",
+  shoes: "#f2f4f7",
   cyan: "#5ce1e6",
   amber: "#ffb547",
 };
@@ -268,11 +271,21 @@ export function processTexture() {
   return texture(c);
 }
 
+/** Navy rib knit with two amber stripes, as on the jacket's collar, cuffs and hem. */
+function rib(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
+  ctx.fillStyle = LEGO.rib;
+  ctx.fillRect(x, y, w, h);
+  ctx.fillStyle = LEGO.amber;
+  ctx.fillRect(x, y + h * 0.3, w, Math.max(2, h * 0.12));
+  ctx.fillRect(x, y + h * 0.6, w, Math.max(2, h * 0.12));
+}
+
 /**
- * Tee print for the torso front: neck showing through the crew collar and a tiny
- * process-flow logo on the chest. Clipped to the torso's trapezoid, 20 px per mm.
+ * Torso front: an open coral bomber jacket with striped rib collar and hem, zip edges,
+ * and a cream tee underneath with the process-flow logo. Clipped to the torso's
+ * trapezoid, 20 px per mm.
  */
-export function shirtTexture() {
+export function torsoTexture() {
   const [c, ctx] = canvas(312, 248);
   const inset = 36; // the torso is 1.8 mm narrower on each side at the top
   ctx.beginPath();
@@ -284,39 +297,80 @@ export function shirtTexture() {
   ctx.clip();
 
   const cx = c.width / 2;
-  ctx.fillStyle = LEGO.skin;
+  const open = { top: 48, bottom: 40 }; // half-widths of the gap between the zip edges
+
+  // The tee showing through the open jacket.
+  ctx.fillStyle = LEGO.tee;
   ctx.beginPath();
-  ctx.moveTo(cx - 52, 0);
-  ctx.quadraticCurveTo(cx, 64, cx + 52, 0);
+  ctx.moveTo(cx - open.top, 0);
+  ctx.lineTo(cx + open.top, 0);
+  ctx.lineTo(cx + open.bottom, c.height);
+  ctx.lineTo(cx - open.bottom, c.height);
   ctx.closePath();
   ctx.fill();
-  ctx.strokeStyle = LEGO.collar;
-  ctx.lineWidth = 10;
+
+  // Neck through the tee's crew collar.
+  ctx.fillStyle = LEGO.skin;
   ctx.beginPath();
-  ctx.moveTo(cx - 56, -2);
-  ctx.quadraticCurveTo(cx, 70, cx + 56, -2);
+  ctx.moveTo(cx - 30, 0);
+  ctx.quadraticCurveTo(cx, 44, cx + 30, 0);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = "#d9d2c4";
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(cx - 34, -2);
+  ctx.quadraticCurveTo(cx, 50, cx + 34, -2);
   ctx.stroke();
 
-  // Chest logo: input ring → node → amber result.
+  // Process-flow logo on the tee: input ring → node → amber result.
   const y = 104;
-  ctx.strokeStyle = LEGO.cyan;
-  ctx.lineWidth = 5;
+  ctx.strokeStyle = "#2b8f96";
+  ctx.lineWidth = 4;
   ctx.beginPath();
-  ctx.moveTo(cx + 34, y + 14);
-  ctx.lineTo(cx + 54, y - 6);
-  ctx.lineTo(cx + 76, y + 10);
+  ctx.moveTo(cx - 16, y + 10);
+  ctx.lineTo(cx + 1, y - 7);
+  ctx.lineTo(cx + 16, y + 6);
   ctx.stroke();
   ctx.beginPath();
-  ctx.arc(cx + 30, y + 18, 7, 0, Math.PI * 2);
+  ctx.arc(cx - 21, y + 14, 6, 0, Math.PI * 2);
   ctx.stroke();
   ctx.fillStyle = LEGO.amber;
   ctx.beginPath();
-  ctx.arc(cx + 82, y + 14, 8, 0, Math.PI * 2);
+  ctx.arc(cx + 22, y + 10, 7, 0, Math.PI * 2);
   ctx.fill();
 
-  // Hem shadow where the tee meets the hips.
-  ctx.fillStyle = "rgba(0, 0, 0, 0.12)";
-  ctx.fillRect(0, c.height - 10, c.width, 10);
+  // Zip edges with a line of teeth.
+  for (const s of [-1, 1]) {
+    ctx.strokeStyle = LEGO.jacketDark;
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(cx + s * open.top, 0);
+    ctx.lineTo(cx + s * open.bottom, c.height);
+    ctx.stroke();
+    ctx.strokeStyle = "#dfe3e8";
+    ctx.lineWidth = 3;
+    ctx.setLineDash([3, 5]);
+    ctx.beginPath();
+    ctx.moveTo(cx + s * (open.top + 5), 0);
+    ctx.lineTo(cx + s * (open.bottom + 5), c.height);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Ribbed collar either side of the neck, and the ribbed hem.
+  rib(ctx, 0, 0, cx - open.top - 3, 16);
+  rib(ctx, cx + open.top + 3, 0, c.width, 16);
+  rib(ctx, 0, c.height - 24, cx - open.bottom - 3, 24);
+  rib(ctx, cx + open.bottom + 3, c.height - 24, c.width, 24);
+
+  // A slim chest pocket on the jacket.
+  ctx.strokeStyle = LEGO.jacketDark;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(cx + 66, 118);
+  ctx.lineTo(cx + 100, 112);
+  ctx.stroke();
 
   return texture(c);
 }

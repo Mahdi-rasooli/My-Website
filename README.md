@@ -56,11 +56,11 @@ flowchart LR
       <br><br>
       1 × head, printed: heavy brows, stubble beard, calm half-smile<br>
       1 × hair piece: dark brown quiff, parted to one side<br>
-      1 × torso: grey crew-neck tee with a process-flow print<br>
-      2 × arms, short sleeves<br>
+      1 × torso: open coral bomber jacket over a cream tee with a process-flow print<br>
+      2 × arms: coral sleeves, navy-and-amber striped cuffs<br>
       2 × hands, C-clip<br>
       1 × hips and legs: denim<br>
-      2 × white sneakers
+      2 × white sneakers with amber soles
       <br><br>
       <b>Swapped in for each chapter</b><br>
       graduation cap · laptop · glowing brain · tablet running a process diagram

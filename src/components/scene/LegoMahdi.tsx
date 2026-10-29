@@ -10,6 +10,7 @@ import {
   MathUtils,
   MeshStandardMaterial,
   Quaternion,
+  Vector3,
   type Group,
 } from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
@@ -19,7 +20,7 @@ import { useStore } from "@/lib/store";
 import { createRider, rideFlow } from "./flowRider";
 import { Brain, Cap, PROP_AT_STOP, animateProps, type PropName } from "./AvatarProps";
 import { clipShape, headProfile, taperTop, uvByHeight } from "./lego/shapes";
-import { LEGO, faceTexture, shirtTexture } from "./lego/prints";
+import { LEGO, faceTexture, torsoTexture } from "./lego/prints";
 import { ARM, HAND, HAND_REST, RING_OFFSET, gripRotation, ringCenter, slotAngle } from "./lego/rig";
 import LegoLaptop, { LAPTOP } from "./lego/LegoLaptop";
 import LegoTablet from "./lego/LegoTablet";
@@ -31,7 +32,7 @@ const HEAD_H = 8.8;
 const HEAD_Y = 31.4;
 const HIP = { x: 3.9, y: 11.5 };
 /** Arms raised forward (x) and swung in (in) to hold a prop. */
-const HOLD = { tablet: { x: -1.0, in: 0.28 }, laptop: { x: -0.7, in: 0.1 } };
+const HOLD = { tablet: { x: -0.75, in: 0.1 }, laptop: { x: -0.7, in: 0.1 } };
 
 /**
  * The laptop is fitted to his hands rather than the other way round: in the laptop pose
@@ -43,17 +44,30 @@ const LAPTOP_GRIP = ringCenter(1, laptopArm, gripRotation(1, laptopArm, new Quat
 const LAPTOP_WIDTH = 2 * (LAPTOP_GRIP.x + 0.4);
 const LAPTOP_POSITION: [number, number, number] = [0, LAPTOP_GRIP.y, LAPTOP_GRIP.z + LAPTOP.depth / 2 - 1.6];
 
+/**
+ * The tablet is held the same way, by its side edges: it leans back a little toward him,
+ * so the hands turn until their holes run along those tilted edges.
+ */
+const TABLET_TILT = 0.3;
+const TABLET_EDGE = new Vector3(0, Math.cos(TABLET_TILT), -Math.sin(TABLET_TILT));
+const tabletArm = new Euler(HOLD.tablet.x, 0, -HOLD.tablet.in);
+const TABLET_GRIP = ringCenter(1, tabletArm, gripRotation(1, tabletArm, new Quaternion(), TABLET_EDGE));
+const TABLET_WIDTH = 2 * (TABLET_GRIP.x + 0.4);
+const TABLET_POSITION: [number, number, number] = [0, TABLET_GRIP.y, TABLET_GRIP.z];
+
 function useLegoParts() {
   const parts = useMemo(() => {
     const plastic = (color: string, extra: Partial<MeshStandardMaterial> = {}) =>
       new MeshStandardMaterial({ color, roughness: 0.32, metalness: 0, ...extra });
     const face = faceTexture();
-    const print = shirtTexture();
+    const print = torsoTexture();
     const materials = {
       skin: plastic(LEGO.skin),
       hair: plastic(LEGO.hair, { roughness: 0.45 }),
       hairShell: plastic(LEGO.hair, { roughness: 0.45, side: DoubleSide }),
-      shirt: plastic(LEGO.shirt),
+      jacket: plastic(LEGO.jacket),
+      rib: plastic(LEGO.rib, { roughness: 0.6 }),
+      accent: plastic(LEGO.amber),
       jeans: plastic(LEGO.jeans),
       shoes: plastic(LEGO.shoes),
       face: plastic("#ffffff", { map: face }),
@@ -62,6 +76,7 @@ function useLegoParts() {
     const geometries = {
       leg: new RoundedBoxGeometry(7.4, 9, 5.8, 3, 0.7),
       shoe: new RoundedBoxGeometry(7.4, 2.4, 8.4, 3, 0.7),
+      sole: new RoundedBoxGeometry(7.7, 0.8, 8.7, 2, 0.35),
       hip: new RoundedBoxGeometry(15.6, 2.6, 6.2, 3, 0.7),
       torso: taperTop(new RoundedBoxGeometry(15.6, 12.4, 7.8, 3, 0.9), 12 / 15.6),
       // phiStart = π puts u = 0.5 (the face print's center) at the front.
@@ -92,8 +107,8 @@ function useLegoParts() {
 type Parts = ReturnType<typeof useLegoParts>;
 
 /**
- * One arm on a shoulder pivot: grey sleeve, bare forearm bent forward, then a wrist
- * peg into a solid C-clip hand whose hole faces forward.
+ * One arm on a shoulder pivot: a jacket sleeve bent forward at the elbow, ending in a
+ * striped rib cuff, then a wrist peg into a solid C-clip hand.
  */
 function Arm({
   side,
@@ -109,16 +124,22 @@ function Arm({
   const { materials: m, geometries: g } = parts;
   return (
     <group ref={pivot} position={[side * ARM.shoulder.x, ARM.shoulder.y, 0]}>
-      <mesh material={m.shirt}>
+      <mesh material={m.jacket}>
         <sphereGeometry args={[2.3, 16, 12]} />
       </mesh>
       <group rotation={[0, 0, side * ARM.splay]}>
-        <mesh material={m.shirt} position={[0, -2.2, 0]}>
+        <mesh material={m.jacket} position={[0, -2.2, 0]}>
           <cylinderGeometry args={[2.25, 2.0, 4.4, 16]} />
         </mesh>
         <group position={[0, ARM.elbowY, 0]} rotation={[ARM.bend, 0, 0]}>
-          <mesh material={m.skin} position={[0, -2.0, 0]}>
-            <cylinderGeometry args={[1.8, 1.65, 4, 20]} />
+          <mesh material={m.jacket} position={[0, -1.6, 0]}>
+            <cylinderGeometry args={[1.95, 1.8, 3.2, 20]} />
+          </mesh>
+          <mesh material={m.rib} position={[0, -3.55, 0]}>
+            <cylinderGeometry args={[1.82, 1.75, 0.9, 20]} />
+          </mesh>
+          <mesh material={m.accent} position={[0, -3.55, 0]}>
+            <cylinderGeometry args={[1.84, 1.84, 0.2, 20]} />
           </mesh>
           {/* Wrist peg, then the C-clip hand: its back wall takes the peg, the slot faces away. */}
           <mesh material={m.skin} position={[0, -4.5, 0]}>
@@ -136,8 +157,9 @@ function Arm({
 }
 
 /**
- * Mahdi as a LEGO minifigure: short quiff, heavy brows, stubble beard, grey tee and
- * jeans. He walks the flow, turns his head toward the cursor, hops at each new node,
+ * Mahdi as a LEGO minifigure: short quiff, heavy brows, stubble beard, an open coral bomber
+ * over a cream tee, slim jeans and amber-soled sneakers. He walks the flow, turns his head
+ * toward the cursor, hops at each new node,
  * waves hello and goodbye, and holds or wears each chapter's prop.
  */
 export default function LegoMahdi() {
@@ -226,7 +248,12 @@ export default function LegoMahdi() {
       const arm = side === 1 ? armL.current : armR.current;
       const wrist = side === 1 ? wristL.current : wristR.current;
       if (!wrist) continue;
-      const target = prop === "laptop" ? gripRotation(side, arm.rotation, s.grip) : HAND_REST;
+      const target =
+        prop === "laptop"
+          ? gripRotation(side, arm.rotation, s.grip)
+          : prop === "tablet"
+            ? gripRotation(side, arm.rotation, s.grip, TABLET_EDGE)
+            : HAND_REST;
       wrist.quaternion.slerp(target, ease);
     }
 
@@ -257,10 +284,11 @@ export default function LegoMahdi() {
             <group key={side} ref={side === 1 ? legL : legR} position={[side * HIP.x, HIP.y, 0]}>
               <mesh geometry={g.leg} material={m.jeans} position={[0, -5.2, 0]} />
               <mesh geometry={g.shoe} material={m.shoes} position={[0, -10.3, 1.2]} />
+              <mesh geometry={g.sole} material={m.accent} position={[0, -11.1, 1.2]} />
             </group>
           ))}
           <mesh geometry={g.hip} material={m.jeans} position={[0, 12.1, 0]} />
-          <mesh geometry={g.torso} material={m.shirt} position={[0, 19.6, 0]} />
+          <mesh geometry={g.torso} material={m.jacket} position={[0, 19.6, 0]} />
           <mesh material={m.print} position={[0, 19.6, 3.92]}>
             <planeGeometry args={[15.6, 12.4]} />
           </mesh>
@@ -303,9 +331,9 @@ export default function LegoMahdi() {
               <LegoLaptop width={LAPTOP_WIDTH} />
             </group>
           </group>
-          <group position={[0, 20.3, 8.5]} rotation={[-0.3, 0, 0]}>
+          <group position={TABLET_POSITION} rotation={[-TABLET_TILT, 0, 0]}>
             <group ref={tablet} scale={0}>
-              <LegoTablet />
+              <LegoTablet width={TABLET_WIDTH} />
             </group>
           </group>
         </group>
