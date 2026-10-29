@@ -78,7 +78,7 @@ Things to try on the site. Tick them off as you go.
 - [ ] Watch LEGO me pop onto the flow and walk to each node
 - [ ] Move your cursor; he turns his head to follow it
 - [ ] Spot the prop he carries in every chapter
-- [ ] Get three stars in **Bottleneck Rush**: requests are piling up at one slow step, and you have four fixes to get the line flowing (hint: more people is not the only lever)
+- [ ] **Untangle the pipeline**: turn the pipes until the flow runs from input to output, three boards, fewer taps for more stars
 - [ ] Reach the last node and get waved at
 - [ ] Turn on "reduce motion" on your device: everything holds still and you still get the whole story
 - [ ] Open it without WebGL: the same story as a flat diagram
