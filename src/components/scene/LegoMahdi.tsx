@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import {
   DoubleSide,
@@ -24,6 +24,7 @@ import { LEGO, faceTexture, torsoTexture } from "./lego/prints";
 import { ARM, HAND, HAND_REST, RING_OFFSET, gripRotation, ringCenter, slotAngle } from "./lego/rig";
 import LegoLaptop, { LAPTOP } from "./lego/LegoLaptop";
 import LegoTablet from "./lego/LegoTablet";
+import SpeechBubble from "./SpeechBubble";
 
 /** The figure is modelled in real minifig millimetres; ~37 mm stands ~1.2 units tall. */
 const K = 0.0325;
@@ -33,6 +34,9 @@ const HEAD_Y = 31.4;
 const HIP = { x: 3.9, y: 11.5 };
 /** Arms raised forward (x) and swung in (in) to hold a prop. */
 const HOLD = { tablet: { x: -0.75, in: 0.1 }, laptop: { x: -0.7, in: 0.1 } };
+/** What he says while waving at the first and last stops, and where his mouth is. */
+const GREETINGS: Record<number, string> = { 0: "Hello and welcome, my buddy!", 6: "Goodbye, dude!" };
+const MOUTH: [number, number, number] = [0, (HEAD_Y - 1.4) * K, 0];
 
 /**
  * The laptop is fitted to his hands rather than the other way round: in the laptop pose
@@ -180,7 +184,13 @@ export default function LegoMahdi() {
   const brain = useRef<Group>(null);
   const tablet = useRef<Group>(null);
   const rider = useRef(createRider());
-  const motion = useRef({ stop: -1, hopStart: -10, grip: new Quaternion() });
+  const motion = useRef({ stop: -1, hopStart: -10, grip: new Quaternion(), say: null as string | null });
+  const [say, setSay] = useState<string | null>(null);
+  const speak = (line: string | null) => {
+    if (line === motion.current.say) return;
+    motion.current.say = line;
+    setSay(line);
+  };
 
   useFrame(({ camera, clock }, rawDelta) => {
     const r = root.current;
@@ -188,7 +198,10 @@ export default function LegoMahdi() {
       return;
     const delta = Math.min(rawDelta, 0.1);
     const t = clock.elapsedTime;
-    if (!rideFlow(r, camera, delta, rider.current, reducedMotion)) return;
+    if (!rideFlow(r, camera, delta, rider.current, reducedMotion)) {
+      speak(null);
+      return;
+    }
     const anim = reducedMotion ? 0 : 1;
     const s = motion.current;
     const speed = rider.current.speed;
@@ -215,6 +228,8 @@ export default function LegoMahdi() {
     const prop = PROP_AT_STOP[stop];
     const holding = prop === "laptop" || prop === "tablet";
     const waving = (stop === 0 || stop === 6) && speed < 0.3;
+    // The bubble needs him nearly stopped to appear but a real walk to vanish, so it doesn't flicker.
+    speak((stop === 0 || stop === 6) && speed < (s.say ? 0.5 : 0.2) ? GREETINGS[stop] : null);
     const hold = prop === "laptop" ? HOLD.laptop : HOLD.tablet;
     armL.current.rotation.x = MathUtils.damp(
       armL.current.rotation.x,
@@ -273,6 +288,7 @@ export default function LegoMahdi() {
 
   return (
     <group ref={root} visible={false}>
+      {say && <SpeechBubble text={say} mouth={MOUTH} />}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.002, 0]}>
         <circleGeometry args={[0.36, 32]} />
         <meshBasicMaterial color={LEGO.cyan} transparent opacity={0.14} />

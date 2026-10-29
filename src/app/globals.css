@@ -63,6 +63,68 @@ body {
   letter-spacing: 0;
 }
 
+/* Gradient-filled text that sweeps back and forth (see GradientText). */
+.gradient-text {
+  background-image: linear-gradient(90deg, var(--gt-colors));
+  background-size: 300% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-pan var(--gt-speed) ease-in-out infinite alternate;
+}
+@keyframes gradient-pan {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+/* The minifig's speech bubble: up and to the right of his mouth, tail pointing back at it. */
+.speech-bubble {
+  transform: translate(34px, calc(-100% - 6px));
+  /* A drop shadow (not box-shadow) so the tail is shaded too. */
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.55));
+}
+.speech-bubble-body {
+  position: relative;
+  width: max-content;
+  max-width: 17rem;
+  padding: 0.6rem 0.95rem;
+  border-radius: 1rem 1rem 1rem 0.3rem;
+  background: var(--line);
+  color: var(--bg-deep);
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  transform-origin: 0% 100%;
+  animation: bubble-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.speech-bubble-body::after {
+  content: "";
+  position: absolute;
+  left: -14px;
+  bottom: -2px;
+  width: 22px;
+  height: 18px;
+  background: inherit;
+  clip-path: polygon(100% 0, 100% 75%, 0 100%);
+}
+@keyframes bubble-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gradient-text,
+  .speech-bubble-body {
+    animation: none;
+  }
+}
+
 /* Drawing-sheet frame: hairline border with registration ticks at the corners. */
 .sheet {
   position: relative;

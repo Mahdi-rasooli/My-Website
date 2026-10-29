@@ -4,9 +4,12 @@ import { profile } from "@/content/profile";
 import { getAge } from "@/lib/age";
 import { useStore } from "@/lib/store";
 import { scrollToStop } from "@/components/ScrollDriver";
+import BlurText from "@/components/text/BlurText";
+import GradientText from "@/components/text/GradientText";
 
 export default function Hero() {
   const optimized = useStore((s) => s.optimized);
+  const booted = useStore((s) => s.booted);
   // Computed at render so the static HTML never goes stale after a birthday.
   const age = getAge(profile.birthDate);
 
@@ -23,11 +26,13 @@ export default function Hero() {
       />
       <div className="relative max-w-3xl">
         <h1 className="wordmark text-[clamp(3.25rem,9vw,8.5rem)] leading-[0.86] font-extrabold uppercase">
-          <span className="block">{profile.firstName}</span>
+          <span className="block">
+            <GradientText>I&apos;m</GradientText> {profile.firstName}
+          </span>
           <span className="block">{profile.name.split(" ").slice(1).join(" ")}</span>
         </h1>
 
-        <p className="mt-8 max-w-[26ch] text-2xl leading-snug md:text-3xl">{profile.pitch}</p>
+        <BlurText text={profile.pitch} play={booted} className="mt-8 max-w-[26ch] text-2xl leading-snug md:text-3xl" />
         <p className="mt-3 text-muted" suppressHydrationWarning>
           {profile.role}. {age}, Computer Science graduate, former web developer.
         </p>
