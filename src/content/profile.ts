@@ -100,7 +100,11 @@ export const profile: Profile = {
             "Full-stack job board: search and apply for jobs, separate dashboards for job seekers and employers, role-based authentication.",
           url: "https://github.com/Mahdi-rasooli/job-portal",
         },
-        { name: "Study management", description: "A study-management web app." },
+        {
+          name: "Study management",
+          description:
+            "Integrated platform for organizations: course and training management, matrix-based performance reviews and employee records, with a Persian RTL admin dashboard. Next.js, Express, MongoDB.",
+        },
       ],
     },
     {
@@ -112,12 +116,16 @@ export const profile: Profile = {
         "Completed a machine-learning course and built models end to end: data cleaning, feature engineering, training and evaluation.",
       bullets: [
         "Course: Machine Learning with Python",
-        "Supervised & unsupervised learning",
-        "Data cleaning, feature engineering and model evaluation",
+        "16 lessons worked through: regression, classification, clustering and recommender systems",
+        "Every model measured on held-out data, with its failures explained",
       ],
       skills: ["Python", "scikit-learn", "Pandas", "Model evaluation", "Neural networks"],
       projects: [
-        { name: "Tehran house-price prediction", description: "A model that predicts house prices in Tehran." },
+        {
+          name: "Tehran house-price prediction",
+          description:
+            "Predicts apartment prices from area, amenities and neighbourhood across 3,243 listings. Test R² from 0.41 to 0.84, with the average error halved.",
+        },
       ],
     },
     {
