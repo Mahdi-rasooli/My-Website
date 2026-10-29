@@ -26,10 +26,11 @@ export default function Hero() {
       />
       <div className="relative max-w-3xl">
         <h1 className="wordmark text-[clamp(3.25rem,9vw,8.5rem)] leading-[0.86] font-extrabold uppercase">
-          <span className="block">
-            <GradientText>I&apos;m</GradientText> {profile.firstName}
-          </span>
-          <span className="block">{profile.name.split(" ").slice(1).join(" ")}</span>
+          {/* One gradient across all three lines, so it flows from "I'm" into the name. */}
+          <GradientText className="block">
+            <span className="block">I&apos;m {profile.firstName}</span>
+            <span className="block">{profile.name.split(" ").slice(1).join(" ")}</span>
+          </GradientText>
         </h1>
 
         <BlurText text={profile.pitch} play={booted} className="mt-8 max-w-[26ch] text-2xl leading-snug md:text-3xl" />
