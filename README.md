@@ -78,7 +78,7 @@ Things to try on the site. Tick them off as you go.
 - [ ] Watch LEGO me pop onto the flow and walk to each node
 - [ ] Move your cursor; he turns his head to follow it
 - [ ] Spot the prop he carries in every chapter
-- [ ] Beat **Optimize my morning**: drag the steps into an efficient flow and delete the waste before the clock runs out
+- [ ] Get three stars in **Bottleneck Rush**: requests are piling up at one slow step, and you have four fixes to get the line flowing (hint: more people is not the only lever)
 - [ ] Reach the last node and get waved at
 - [ ] Turn on "reduce motion" on your device: everything holds still and you still get the whole story
 - [ ] Open it without WebGL: the same story as a flat diagram

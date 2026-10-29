@@ -122,6 +122,35 @@ body {
   }
 }
 
+/* Bottleneck Rush: data pulses run along the pipe once the line keeps up. */
+.flow-dash {
+  animation: flow-dash 0.8s linear infinite;
+}
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+/* Win burst: each brick flies up on an arc and drops away. */
+.brick-pop {
+  opacity: 0;
+  animation: brick-pop 1.5s cubic-bezier(0.2, 0.7, 0.4, 1) forwards;
+}
+@keyframes brick-pop {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0) scale(0.4);
+  }
+  45% {
+    opacity: 1;
+    transform: translate(calc(var(--dx) * 0.6), var(--peak)) rotate(calc(var(--r) * 0.5)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) rotate(var(--r)) scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

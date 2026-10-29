@@ -11,4 +11,6 @@ export const sceneState = {
   untangle: 0,
   /** Pointer position, -1…1 on both axes. */
   pointer: { x: 0, y: 0 },
+  /** When the mini-game was last won (performance.now() seconds), so the figure can cheer. */
+  celebratedAt: -Infinity,
 };

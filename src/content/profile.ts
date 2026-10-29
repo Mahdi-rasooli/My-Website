@@ -139,9 +139,9 @@ export const profile: Profile = {
     resumeUrl: "/resume.pdf",
   },
   game: {
-    title: "Optimize my morning",
+    title: "Bottleneck Rush",
     intro:
-      "This is my job, in miniature. Drag the steps into an efficient flow and delete the waste before the clock runs out.",
+      "This is my job, in miniature. Requests are piling up at one slow step and the line is choking. Find the bottleneck and get it flowing with as few changes as possible.",
     punchline: "Not bad. Imagine what I'd do with your company's processes.",
   },
 };

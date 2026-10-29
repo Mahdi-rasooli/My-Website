@@ -12,6 +12,8 @@ interface SiteState {
   setActiveStop: (index: number) => void;
   setBooted: () => void;
   setReducedMotion: (value: boolean) => void;
+  /** The mini-game was won: the 3D figure cheers. */
+  celebrate: () => void;
 }
 
 export const useStore = create<SiteState>((set, get) => ({
@@ -31,4 +33,7 @@ export const useStore = create<SiteState>((set, get) => ({
   setActiveStop: (activeStop) => set({ activeStop }),
   setBooted: () => set({ booted: true }),
   setReducedMotion: (reducedMotion) => set({ reducedMotion }),
+  celebrate: () => {
+    sceneState.celebratedAt = performance.now() / 1000;
+  },
 }));

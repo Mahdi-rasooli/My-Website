@@ -177,7 +177,11 @@ export default function LegoMahdi() {
       s.stop = stop;
     }
     const k = (t - s.hopStart) / 0.45;
-    body.current.position.y = k < 1 ? Math.sin(k * Math.PI) * 3.5 : 0;
+    // Won the mini-game: a few seconds of arms-up bouncing at the game stop.
+    const cheering = stop === 5 && performance.now() / 1000 - sceneState.celebratedAt < 3;
+    const cheerArm = 2.7 + Math.sin(t * 10) * 0.25 * anim;
+    body.current.position.y =
+      cheering && anim ? Math.abs(Math.sin(t * 7)) * 3 : k < 1 ? Math.sin(k * Math.PI) * 3.5 : 0;
     body.current.rotation.x = MathUtils.damp(body.current.rotation.x, speed * 0.12 * anim, 6, delta);
 
     // Walk cycle: legs scissor, arms swing against them.
@@ -189,18 +193,28 @@ export default function LegoMahdi() {
     const holding = prop === "laptop" || prop === "clipboard";
     const waving = (stop === 0 || stop === 6) && speed < 0.3;
     const hold = prop === "laptop" ? HOLD.laptop : HOLD.clipboard;
-    armL.current.rotation.x = MathUtils.damp(armL.current.rotation.x, holding ? hold.x : -stride * 0.8, 12, delta);
+    armL.current.rotation.x = MathUtils.damp(
+      armL.current.rotation.x,
+      holding ? hold.x : cheering ? 0 : -stride * 0.8,
+      12,
+      delta,
+    );
     armR.current.rotation.x = MathUtils.damp(
       armR.current.rotation.x,
-      holding ? hold.x : waving ? 0 : stride * 0.8,
+      holding ? hold.x : waving || cheering ? 0 : stride * 0.8,
       12,
       delta,
     );
     // Holding something, both arms swing in so its edges sit in the hand clips.
-    armL.current.rotation.z = MathUtils.damp(armL.current.rotation.z, holding ? -hold.in : 0, 10, delta);
+    armL.current.rotation.z = MathUtils.damp(
+      armL.current.rotation.z,
+      holding ? -hold.in : cheering ? cheerArm : 0,
+      10,
+      delta,
+    );
     armR.current.rotation.z = MathUtils.damp(
       armR.current.rotation.z,
-      holding ? hold.in : waving ? -2.6 + Math.sin(t * 9) * 0.35 * anim : 0,
+      holding ? hold.in : cheering ? -cheerArm : waving ? -2.6 + Math.sin(t * 9) * 0.35 * anim : 0,
       10,
       delta,
     );
