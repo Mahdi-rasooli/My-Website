@@ -7,7 +7,6 @@ import { scrollToStop } from "@/components/ScrollDriver";
 
 export default function Hero() {
   const optimized = useStore((s) => s.optimized);
-  const optimize = useStore((s) => s.optimize);
   // Computed at render so the static HTML never goes stale after a birthday.
   const age = getAge(profile.birthDate);
 
@@ -23,12 +22,7 @@ export default function Hero() {
         className="pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-linear-to-t from-bg-deep via-bg-deep/75 to-transparent md:hidden"
       />
       <div className="relative max-w-3xl">
-        <p className="font-mono text-xs text-cyan/80" aria-live="polite">
-          process mahdi_rasouli.exe <span className="text-muted">/</span> state:{" "}
-          <span className={optimized ? "text-amber" : "text-line"}>{optimized ? "optimized" : "tangled"}</span>
-        </p>
-
-        <h1 className="wordmark mt-5 text-[clamp(3.25rem,9vw,8.5rem)] leading-[0.86] font-extrabold uppercase">
+        <h1 className="wordmark text-[clamp(3.25rem,9vw,8.5rem)] leading-[0.86] font-extrabold uppercase">
           <span className="block">{profile.firstName}</span>
           <span className="block">{profile.name.split(" ").slice(1).join(" ")}</span>
         </h1>
@@ -38,23 +32,13 @@ export default function Hero() {
           {profile.role}. {age}, Computer Science graduate, former web developer.
         </p>
 
-        <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
-          <button
-            type="button"
-            onClick={optimize}
-            disabled={optimized}
-            className="bg-amber px-6 py-3.5 font-semibold text-bg-deep transition-[box-shadow,opacity] hover:shadow-[0_0_32px_-4px_var(--amber)] disabled:cursor-default disabled:opacity-60 disabled:shadow-none"
-          >
-            {optimized ? "Optimized" : "Optimize me"}
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollToStop(1)}
-            className="text-muted underline decoration-cyan/40 underline-offset-[6px] transition-colors hover:text-line"
-          >
-            See how I got here
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => scrollToStop(1)}
+          className="mt-10 text-left text-muted underline decoration-cyan/40 underline-offset-[6px] transition-colors hover:text-line"
+        >
+          If you want to see how I got here, please scroll down
+        </button>
       </div>
     </section>
   );

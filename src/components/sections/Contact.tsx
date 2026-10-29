@@ -33,7 +33,7 @@ export default function Contact() {
     >
       <p className="font-mono text-xs text-cyan">output</p>
       <h2 className="mt-5 max-w-[16ch] text-[clamp(2.5rem,6vw,5rem)] leading-[0.95] font-extrabold [font-variation-settings:'wdth'_118]">
-        Got a messy process? Let&apos;s talk.
+        Do you wanna collaborate?
       </h2>
       <p className="mt-5 max-w-[46ch] text-line/80">
         I&apos;m open to roles and projects in AI process optimization, machine learning and web development.
@@ -53,7 +53,7 @@ export default function Contact() {
       </div>
 
       <footer className="mt-20 text-xs text-muted">
-        © {new Date().getFullYear()} {profile.name}. <Fill text={profile.location} />. Built with Next.js and three.js.
+        © {new Date().getFullYear()} {profile.name}. <Fill text={profile.location} />. Built with Claude Code, Next.js and three.js.
       </footer>
     </section>
   );

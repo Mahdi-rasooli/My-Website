@@ -61,7 +61,7 @@ export const profile: Profile = {
   role: "AI process engineer at Avitec",
   pitch: "I turn messy processes into elegant systems.",
   birthDate: "2003-09-03",
-  location: "TODO(mahdi): City, Country",
+  location: "Tehran, Iran",
   nodes: [
     {
       id: "boot",

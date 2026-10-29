@@ -16,7 +16,7 @@
 
 ## ○ Start event
 
-On the site, my career starts as a tangled knot of pipes. When you press **Optimize me**, it pulls straight into one clean flow, and a LEGO version of me walks it from node to node. That's what I do for a living, compressed into a single scroll.
+On the site, my career starts as a tangled knot of pipes. The moment you start scrolling, it pulls straight into one clean flow, and a LEGO version of me walks it from node to node. That's what I do for a living, compressed into a single scroll.
 
 ## ▭ Process map
 
@@ -74,7 +74,7 @@ flowchart LR
 
 Things to try on the site. Tick them off as you go.
 
-- [ ] Press **Optimize me** and watch the knot untangle (and my name stretch)
+- [ ] Scroll once and watch the knot untangle (and my name stretch)
 - [ ] Watch LEGO me pop onto the flow and walk to each node
 - [ ] Move your cursor; he turns his head to follow it
 - [ ] Spot the prop he carries in every chapter
@@ -97,4 +97,4 @@ Things to try on the site. Tick them off as you go.
 
 Every process needs an end event. Mine is a conversation: the last node on the site has my links and my résumé.
 
-<p align="center"><b>Got a messy process? Let's talk.</b></p>
+<p align="center"><b>Do you wanna collaborate?</b></p>
